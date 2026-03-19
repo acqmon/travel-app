@@ -1,0 +1,147 @@
+**TanStack Query (React Query) Explained**
+
+**What is TanStack Query?**
+TanStack Query, formerly known as React Query, is a powerful data-fetching library for React applications. It helps you fetch, cache, synchronize, and update server state in your React apps with ease. Instead of manually handling loading, error, and caching states, TanStack Query automates this, improving performance and developer experience.
+
+**Why Use TanStack Query?**
+
+* Automatic caching of server data.
+* Background updates for fresh data.
+* Simplified handling of loading, error, and success states.
+* Out-of-the-box support for pagination and infinite scrolling.
+* Reduces boilerplate code for data fetching.
+
+**Core Concepts and Methods**
+
+1. **useQuery**
+
+   * Fetches data and caches it.
+   * Automatically tracks loading and error states.
+
+   ```javascript
+   import { useQuery } from '@tanstack/react-query';
+
+   function fetchUsers() {
+     return fetch('https://jsonplaceholder.typicode.com/users')
+       .then(res => res.json());
+   }
+
+   function Users() {
+     const { data, error, isLoading } = useQuery(['users'], fetchUsers);
+
+     if (isLoading) return <div>Loading...</div>;
+     if (error) return <div>Error: {error.message}</div>;
+
+     return (
+       <ul>
+         {data.map(user => (
+           <li key={user.id}>{user.name}</li>
+         ))}
+       </ul>
+     );
+   }
+   ```
+
+2. **useMutation**
+
+   * Used to create/update/delete data on the server.
+   * Provides loading, error, and success states.
+
+   ```javascript
+   import { useMutation, useQueryClient } from '@tanstack/react-query';
+
+   function addUser(newUser) {
+     return fetch('https://jsonplaceholder.typicode.com/users', {
+       method: 'POST',
+       headers: { 'Content-Type': 'application/json' },
+       body: JSON.stringify(newUser),
+     }).then(res => res.json());
+   }
+
+   function AddUser() {
+     const queryClient = useQueryClient();
+     const mutation = useMutation(addUser, {
+       onSuccess: () => {
+         queryClient.invalidateQueries(['users']); // Refresh users list after adding
+       },
+     });
+
+     return (
+       <button onClick={() => mutation.mutate({ name: 'New User' })}>
+         Add User
+       </button>
+     );
+   }
+   ```
+
+3. **useQueryClient**
+
+   * Provides access to the query cache.
+   * Can manually invalidate, refetch, or update queries.
+
+   ```javascript
+   const queryClient = useQueryClient();
+   queryClient.invalidateQueries(['users']); // Refetch users
+   ```
+
+4. **Prefetching Queries**
+
+   * Preload data before it is needed.
+
+   ```javascript
+   queryClient.prefetchQuery(['users'], fetchUsers);
+   ```
+
+**Example: Complete App**
+
+```javascript
+import React from 'react';
+import { useQuery, useMutation, useQueryClient, QueryClient, QueryClientProvider } from '@tanstack/react-query';
+
+const queryClient = new QueryClient();
+
+function fetchUsers() {
+  return fetch('https://jsonplaceholder.typicode.com/users').then(res => res.json());
+}
+
+function addUser(newUser) {
+  return fetch('https://jsonplaceholder.typicode.com/users', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(newUser),
+  }).then(res => res.json());
+}
+
+function Users() {
+  const queryClient = useQueryClient();
+  const { data, isLoading, error } = useQuery(['users'], fetchUsers);
+  const mutation = useMutation(addUser, {
+    onSuccess: () => queryClient.invalidateQueries(['users']),
+  });
+
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error.message}</div>;
+
+  return (
+    <div>
+      <ul>
+        {data.map(user => <li key={user.id}>{user.name}</li>)}
+      </ul>
+      <button onClick={() => mutation.mutate({ name: 'New User' })}>Add User</button>
+    </div>
+  );
+}
+
+export default function App() {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <Users />
+    </QueryClientProvider>
+  );
+}
+```
+
+**Summary**
+TanStack Query simplifies server state management by handling caching, background updates, and request states automatically. Its main tools are `useQuery` for fetching data, `useMutation` for modifying data, and `useQueryClient` for managing the cache manually.
+
+---

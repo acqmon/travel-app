@@ -1,0 +1,154 @@
+// user.service.js
+
+const { User, Profile, Order, sequelize } = require('../models');
+
+async function runUserExamples() {
+  // =========================
+  // CREATE
+  // =========================
+
+  // 1. create()
+  const user = await User.create({
+    name: 'Rahul',
+    email: 'rahul@test.com',
+    status: 'active'
+  });
+
+  // 2. bulkCreate()
+  await User.bulkCreate([
+    { name: 'Amit', email: 'amit@test.com' },
+    { name: 'Neha', email: 'neha@test.com' }
+  ]);
+
+  // 3. build() + save()
+  const tempUser = User.build({ name: 'Temp', email: 'temp@test.com' });
+  await tempUser.save();
+
+
+  // =========================
+  // READ
+  // =========================
+
+  // 4. findAll()
+  const allUsers = await User.findAll();
+
+  // 5. findOne()
+  const activeUser = await User.findOne({
+    where: { status: 'active' }
+  });
+
+  // 6. findByPk()
+  const userById = await User.findByPk(user.id);
+
+  // 7. findAndCountAll() (pagination)
+  const paginatedUsers = await User.findAndCountAll({
+    where: { status: 'active' },
+    limit: 10,
+    offset: 0,
+    order: [['createdAt', 'DESC']],
+    attributes: ['id', 'name', 'email']
+  });
+
+  // 8. count()
+  const totalUsers = await User.count();
+
+
+  // =========================
+  // UPDATE
+  // =========================
+
+  // 9. Model.update() (bulk update)
+  await User.update(
+    { status: 'inactive' },
+    { where: { id: user.id } }
+  );
+
+  // 10. instance.update()
+  await user.update({ name: 'Rahul Sharma' });
+
+  // 11. increment()
+  await User.increment('loginCount', {
+    by: 1,
+    where: { id: user.id }
+  });
+
+
+  // =========================
+  // DELETE
+  // =========================
+
+  // 12. Model.destroy() (bulk delete)
+  await User.destroy({
+    where: { status: 'inactive' }
+  });
+
+  // 13. instance.destroy()
+  await tempUser.destroy();
+
+
+  // =========================
+  // ASSOCIATIONS (include)
+  // =========================
+
+  const usersWithProfiles = await User.findAll({
+    include: [
+      { model: Profile },
+      { model: Order }
+    ]
+  });
+
+
+  // =========================
+  // UPSERT
+  // =========================
+
+  await User.upsert({
+    id: user.id,
+    name: 'Rahul Updated Again',
+    email: 'rahul@test.com'
+  });
+
+
+  // =========================
+  // TRANSACTION
+  // =========================
+
+  await sequelize.transaction(async (t) => {
+    const newUser = await User.create(
+      { name: 'Txn User', email: 'txn@test.com' },
+      { transaction: t }
+    );
+
+    await Profile.create(
+      { userId: newUser.id, bio: 'Created in transaction' },
+      { transaction: t }
+    );
+
+    await Order.create(
+      { userId: newUser.id, total: 999 },
+      { transaction: t }
+    );
+  });
+
+
+  // =========================
+  // INSTANCE UTILITIES
+  // =========================
+
+  // reload()
+  await user.reload();
+
+
+  // =========================
+  // RAW QUERY
+  // =========================
+
+  await sequelize.query('SELECT id, name FROM Users');
+
+
+  console.log('All Sequelize examples executed successfully!');
+}
+
+module.exports = {
+  runUserExamples
+};

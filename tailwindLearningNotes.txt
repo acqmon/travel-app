@@ -1,0 +1,295 @@
+====================================
+TAILWIND CSS – COMPLETE CORE SHEET
+====================================
+
+
+-------------- HEIGHT & LAYOUT ---------------
+
+h-screen        → height: 100vh (hero, auth pages)
+min-h-screen    → grows with content (preferred)
+
+flex            → flexbox layout
+grid            → grid layout
+
+items-center    → vertical alignment
+justify-center  → horizontal alignment
+
+gap-*           → spacing between children (preferred)
+space-x-*       → horizontal spacing (older pattern)
+space-y-*       → vertical spacing
+
+Alternative:
+grid place-items-center → simplest centering
+
+
+
+-------------- WIDTH -------------------------
+
+w-full          → 100% width
+max-w-*         → readable containers
+min-w-*         → prevent shrinking
+
+Best practice:
+- Use max-w for content
+- Avoid fixed widths
+
+
+
+-------------- FONT SIZE ---------------------
+
+text-xs     → badges, metadata
+text-sm     → labels, secondary text
+text-base   → body text
+text-lg     → emphasized text
+text-xl     → subtitles
+text-2xl    → small headings
+text-3xl    → section headings
+text-4xl    → page headings
+text-5xl    → hero text
+
+Best practice:
+- Scale at layout/page level
+- Components stay neutral
+
+Fluid alternative:
+text-[clamp(1.5rem,4vw,3rem)]
+
+
+
+-------------- FONT FAMILY -------------------
+
+font-sans   → UI default
+font-serif  → blogs/articles
+font-mono   → code, IDs
+
+Best practice:
+- Define fonts globally (Next.js fonts)
+- Avoid switching fonts inside components
+
+
+
+-------------- FONT WEIGHT -------------------
+
+font-thin       → decorative only
+font-light      → subtle UI
+font-normal     → body text
+font-medium     → buttons, labels
+font-semibold   → headings
+font-bold       → strong emphasis
+font-extrabold  → hero headings
+font-black      → rare usage
+
+
+
+-------------- LINE HEIGHT -------------------
+
+leading-none     → icons, buttons
+leading-tight    → headings
+leading-snug     → compact headings
+leading-normal   → body text
+leading-relaxed  → long reading text
+leading-loose    → large readable blocks
+
+
+
+-------------- LETTER SPACING ----------------
+
+tracking-tighter → bold headings
+tracking-tight  → headings
+tracking-normal → body
+tracking-wide   → buttons, labels
+tracking-wider  → nav items
+tracking-widest → uppercase headings
+
+
+
+-------------- TEXT ALIGNMENT ----------------
+
+text-left     → default (recommended)
+text-center   → hero sections
+text-right    → numbers, tables
+text-justify  → avoid in UI
+
+
+
+-------------- TEXT TRANSFORM ----------------
+
+uppercase     → buttons, nav
+lowercase     → stylistic
+capitalize    → names, titles
+normal-case   → reset
+
+
+
+-------------- COLORS ------------------------
+
+text-primary
+text-muted
+bg-primary
+bg-muted
+border-primary
+
+Best practice:
+- Semantic colors
+- Define via CSS variables
+
+
+
+-------------- BORDERS & RADIUS --------------
+
+border
+border-*        → thickness/color
+rounded-sm
+rounded-md
+rounded-lg
+rounded-full
+
+divide-x / divide-y → list separators
+
+
+
+-------------- SHADOWS -----------------------
+
+shadow-sm      → subtle cards
+shadow-md      → standard cards
+shadow-lg      → modals
+shadow-none
+
+
+
+-------------- POSITIONING -------------------
+
+relative       → anchor for children
+absolute       → positioned element
+fixed          → viewport-based
+sticky         → scroll-based
+
+top-* bottom-* left-* right-*
+inset-*        → shorthand
+
+z-*            → stacking order
+
+
+
+-------------- OVERFLOW & SCROLL -------------
+
+overflow-hidden
+overflow-auto
+overflow-scroll
+overflow-x-scroll
+overflow-y-scroll
+
+Use for:
+- modals
+- carousels
+- tables
+
+
+
+-------------- RESPONSIVE --------------------
+
+sm:  → small screens
+md:  → tablets
+lg:  → laptops
+xl:  → desktops
+
+Example:
+text-base md:text-lg lg:text-xl
+
+Rule:
+- Mobile first
+- Avoid breakpoint abuse
+
+
+
+-------------- STATES & INTERACTIONS ---------
+
+hover:*          → hover state
+focus-visible:*  → keyboard focus
+active:*         → click state
+disabled:*       → disabled UI
+
+Common patterns:
+hover:bg-*
+hover:text-*
+hover:opacity-*
+hover:scale-*
+
+focus-visible:ring-2
+focus-visible:ring-primary
+focus-visible:ring-offset-2
+
+active:scale-95
+
+disabled:opacity-50
+disabled:cursor-not-allowed
+disabled:pointer-events-none
+
+
+
+-------------- GROUP & PEER ------------------
+
+group                 → parent state
+group-hover:*         → child reacts
+
+peer                  → sibling state
+peer-focus:*          → form styling
+peer-checked:*        → checkbox/radio
+
+
+
+-------------- TRANSITIONS -------------------
+
+transition
+transition-all
+transition-colors
+transition-transform
+
+duration-150
+duration-300
+ease-in-out
+
+Rule:
+- No hover without transition
+
+
+
+-------------- TRANSFORMS --------------------
+
+scale-95 / scale-100 / scale-105
+translate-x-* / translate-y-*
+rotate-*
+
+
+
+-------------- FORMS -------------------------
+
+appearance-none
+accent-*
+placeholder-*
+focus:ring-*
+
+Rule:
+- Always style focus states
+
+
+
+-------------- ACCESSIBILITY ----------------
+
+focus-visible:*   → keyboard users
+aria-*            → screen readers
+cursor-not-allowed
+
+Rule:
+- Never remove focus styles without replacement
+
+
+
+-------------- GOLDEN RULES ------------------
+
+• Layout controls scale
+• Components stay neutral
+• One element = one font-size
+• Utilities first, custom CSS last
+• Arbitrary values = exceptions
+• Consistency > creativity

@@ -1,0 +1,367 @@
+# POSTGRESQL — COMPLETE COMMANDS REFERENCE (WITH EXPLANATIONS & EXAMPLES)
+
+---
+
+## PSQL META COMMANDS
+
+Run inside `psql`.
+
+* `\?` — list all psql meta commands
+  **Example:** `\?`
+* `\h` — help for SQL commands
+  **Example:** `\h CREATE TABLE`
+* `\q` — quit psql
+  **Example:** `\q`
+* `\l` — list all databases
+  **Example:** `\l`
+* `\c db` — connect to database
+  **Example:** `\c mydb`
+* `\dt` — list tables
+  **Example:** `\dt`
+* `\dv` — list views
+  **Example:** `\dv`
+* `\df` — list functions
+  **Example:** `\df`
+* `\ds` — list sequences
+  **Example:** `\ds`
+* `\d table` — table structure
+  **Example:** `\d users`
+* `\d+ table` — detailed table info
+  **Example:** `\d+ users`
+* `\du` — list users / roles
+  **Example:** `\du`
+* `\dn` — list schemas
+  **Example:** `\dn`
+* `\conninfo` — current connection info
+  **Example:** `\conninfo`
+* `\watch` — rerun last query repeatedly
+  **Example:** `SELECT count(*) FROM users; \watch 2`
+* `\timing` — show query execution time
+  **Example:** `\timing`
+* `\x` — expanded output
+  **Example:** `\x`
+
+---
+
+## DATABASE
+
+* `CREATE DATABASE` — create a new database
+  **Example:** `CREATE DATABASE app_db;`
+* `DROP DATABASE` — delete database permanently
+  **Example:** `DROP DATABASE app_db;`
+* `ALTER DATABASE RENAME` — rename database
+  **Example:** `ALTER DATABASE app_db RENAME TO prod_db;`
+* `ALTER DATABASE OWNER` — change database owner
+  **Example:** `ALTER DATABASE prod_db OWNER TO admin;`
+
+---
+
+## SCHEMA
+
+* `CREATE SCHEMA` — create schema
+  **Example:** `CREATE SCHEMA auth;`
+* `DROP SCHEMA` — delete schema
+  **Example:** `DROP SCHEMA auth;`
+* `ALTER SCHEMA RENAME` — rename schema
+  **Example:** `ALTER SCHEMA auth RENAME TO accounts;`
+* `SET search_path` — default schema order
+  **Example:** `SET search_path TO accounts, public;`
+
+---
+
+## ROLES / USERS
+
+* `CREATE USER` — create login user
+  **Example:** `CREATE USER app_user WITH PASSWORD 'secret';`
+* `CREATE ROLE` — create role
+  **Example:** `CREATE ROLE readonly;`
+* `ALTER USER` — change password
+  **Example:** `ALTER USER app_user PASSWORD 'newpass';`
+* `ALTER ROLE WITH LOGIN` — allow login
+  **Example:** `ALTER ROLE readonly WITH LOGIN;`
+* `DROP USER / ROLE` — delete
+  **Example:** `DROP USER app_user;`
+* `GRANT role TO user` — assign role
+  **Example:** `GRANT readonly TO app_user;`
+* `REVOKE role FROM user` — remove role
+  **Example:** `REVOKE readonly FROM app_user;`
+
+---
+
+## PRIVILEGES
+
+* `GRANT ALL` — full access
+  **Example:** `GRANT ALL ON TABLE users TO app_user;`
+* `GRANT SELECT/INSERT/...` — specific permissions
+  **Example:** `GRANT SELECT, INSERT ON users TO app_user;`
+* `REVOKE` — remove permissions
+  **Example:** `REVOKE INSERT ON users FROM app_user;`
+
+---
+
+## DATA TYPES (EXAMPLES)
+
+```sql
+id SERIAL,
+price NUMERIC(10,2),
+name VARCHAR(100),
+active BOOLEAN,
+created_at TIMESTAMPTZ,
+meta JSONB,
+tags TEXT[]
+```
+
+---
+
+## TABLE
+
+* `CREATE TABLE`
+  **Example:**
+
+  ```sql
+  CREATE TABLE users (
+    id SERIAL PRIMARY KEY,
+    email TEXT NOT NULL
+  );
+  ```
+* `DROP TABLE`
+  **Example:** `DROP TABLE users;`
+* `TRUNCATE`
+  **Example:** `TRUNCATE TABLE users;`
+* `ALTER TABLE RENAME`
+  **Example:** `ALTER TABLE users RENAME TO customers;`
+
+---
+
+## ALTER TABLE
+
+```sql
+ALTER TABLE users ADD COLUMN age INT;
+ALTER TABLE users DROP COLUMN age;
+ALTER TABLE users RENAME COLUMN email TO username;
+ALTER TABLE users ALTER COLUMN username SET NOT NULL;
+ALTER TABLE users ALTER COLUMN username DROP NOT NULL;
+ALTER TABLE users ALTER COLUMN age SET DEFAULT 18;
+ALTER TABLE users ALTER COLUMN age DROP DEFAULT;
+```
+
+---
+
+## CONSTRAINTS
+
+```sql
+PRIMARY KEY (id)
+UNIQUE (email)
+CHECK (age >= 18)
+FOREIGN KEY (user_id) REFERENCES users(id)
+```
+
+---
+
+## SEQUENCES
+
+```sql
+CREATE SEQUENCE order_seq;
+SELECT nextval('order_seq');
+ALTER SEQUENCE order_seq RESTART 1;
+DROP SEQUENCE order_seq;
+```
+
+---
+
+## INSERT
+
+```sql
+INSERT INTO users VALUES (1, 'a@a.com');
+INSERT INTO users (email) VALUES ('b@b.com');
+INSERT INTO users (email)
+SELECT email FROM temp_users;
+```
+
+---
+
+## UPSERT
+
+```sql
+INSERT INTO users (email)
+VALUES ('a@a.com')
+ON CONFLICT (email) DO NOTHING;
+
+INSERT INTO users (email)
+VALUES ('a@a.com')
+ON CONFLICT (email)
+DO UPDATE SET email = EXCLUDED.email;
+```
+
+---
+
+## SELECT / WHERE
+
+```sql
+SELECT * FROM users;
+SELECT DISTINCT email FROM users;
+SELECT email AS user_email FROM users;
+SELECT * FROM users WHERE age BETWEEN 18 AND 30;
+SELECT * FROM users WHERE id IN (1,2,3);
+SELECT * FROM users WHERE deleted_at IS NULL;
+```
+
+---
+
+## ORDER / LIMIT
+
+```sql
+SELECT * FROM users ORDER BY id DESC;
+SELECT * FROM users LIMIT 10 OFFSET 20;
+```
+
+---
+
+## UPDATE / DELETE
+
+```sql
+UPDATE users SET active = true;
+UPDATE users SET active = false WHERE id = 1;
+DELETE FROM users;
+DELETE FROM users WHERE id = 1;
+```
+
+---
+
+## JOINS
+
+```sql
+SELECT * FROM orders o
+INNER JOIN users u ON u.id = o.user_id;
+```
+
+---
+
+## AGGREGATES / GROUPING
+
+```sql
+SELECT COUNT(*) FROM users;
+SELECT user_id, COUNT(*)
+FROM orders
+GROUP BY user_id
+HAVING COUNT(*) > 5;
+```
+
+---
+
+## SUBQUERIES
+
+```sql
+SELECT * FROM users
+WHERE id IN (SELECT user_id FROM orders);
+```
+
+---
+
+## CTE (WITH)
+
+```sql
+WITH recent AS (
+  SELECT * FROM orders ORDER BY created_at DESC
+)
+SELECT * FROM recent;
+```
+
+---
+
+## WINDOW FUNCTIONS
+
+```sql
+SELECT id,
+COUNT(*) OVER () AS total
+FROM users;
+```
+
+---
+
+## INDEX
+
+```sql
+CREATE INDEX idx_users_email ON users(email);
+CREATE UNIQUE INDEX idx_users_email_u ON users(email);
+REINDEX TABLE users;
+```
+
+---
+
+## VIEWS / MATERIALIZED VIEWS
+
+```sql
+CREATE VIEW active_users AS
+SELECT * FROM users WHERE active = true;
+
+CREATE MATERIALIZED VIEW stats AS
+SELECT COUNT(*) FROM users;
+REFRESH MATERIALIZED VIEW stats;
+```
+
+---
+
+## FUNCTIONS / PROCEDURES
+
+```sql
+CREATE FUNCTION add(a INT, b INT)
+RETURNS INT AS $$ SELECT a + b; $$ LANGUAGE sql;
+
+CREATE PROCEDURE log_event()
+LANGUAGE sql AS $$ INSERT INTO logs VALUES (now()); $$;
+```
+
+---
+
+## TRIGGERS
+
+```sql
+CREATE TRIGGER before_insert
+BEFORE INSERT ON users
+FOR EACH ROW EXECUTE FUNCTION log_event();
+```
+
+---
+
+## TRANSACTIONS
+
+```sql
+BEGIN;
+UPDATE users SET active = true;
+SAVEPOINT s1;
+ROLLBACK TO s1;
+COMMIT;
+```
+
+---
+
+## JSON / ARRAY / TEXT / DATE / NULL
+
+```sql
+SELECT meta->>'name' FROM users;
+SELECT tags[1] FROM users;
+SELECT * FROM users WHERE name ILIKE '%john%';
+SELECT now()::date;
+SELECT COALESCE(age, 0) FROM users;
+```
+
+---
+
+## ENUM / EXTENSIONS / UUID
+
+```sql
+CREATE TYPE status AS ENUM ('open','closed');
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+SELECT uuid_generate_v4();
+```
+
+---
+
+## COPY / BACKUP / MAINTENANCE
+
+```sql
+COPY users TO '/tmp/users.csv' CSV HEADER;
+VACUUM ANALYZE users;
+EXPLAIN ANALYZE SELECT * FROM users;
+```

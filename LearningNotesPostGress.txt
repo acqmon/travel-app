@@ -1,0 +1,327 @@
+CHAPTER 1 NOTES:
+---------------
+-- Connect
+psql -U postgres
+\c db_name
+
+-- Database
+CREATE DATABASE db_name;
+DROP DATABASE db_name;
+
+-- Table
+CREATE TABLE table_name (
+    id SERIAL PRIMARY KEY,
+    col datatype
+);
+
+DROP TABLE table_name;
+
+-- Insert
+INSERT INTO table (col1, col2) VALUES (v1, v2);
+
+-- Select
+SELECT * FROM table;
+SELECT col FROM table WHERE condition;
+
+-- Update
+UPDATE table SET col = value WHERE condition;
+
+-- Delete
+DELETE FROM table WHERE condition;
+
+-- Inspect
+\dt
+\d table
+
+--------------------------------------------------------------------------
+CHAPTER 2;
+----------------------
+    -Data Types, Constraints & Real Schema Design
+    -SERIAL vs IDENTITY
+    -NOT NULL, UNIQUE, CHECK
+    -Designing tables properly
+    -Hands-on with mistakes & fixes
+
+    -- Data Types
+INT
+SERIAL
+NUMERIC(10,2)
+TEXT
+BOOLEAN
+DATE
+TIMESTAMP
+TIMESTAMPTZ
+
+-- Constraints
+NOT NULL
+UNIQUE
+CHECK (condition)
+DEFAULT value
+PRIMARY KEY
+
+-- Table Example
+CREATE TABLE table_name (
+    id SERIAL PRIMARY KEY,
+    col TEXT NOT NULL,
+    col2 INT CHECK (col2 > 0),
+    col3 BOOLEAN DEFAULT true,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Test Constraints
+INSERT INTO table VALUES (...); -- fails if constraint violated
+
+-- Inspect
+\d table_name
+
+--------------------------------------------------------------------------
+CHAPTER 3 — Relationships & Foreign Keys (Hands-On)
+Goal of this chapter
+    -Understand table relationships
+    -Create foreign keys
+    -Enforce referential integrity
+    -See PostgreSQL’s strict behavior (vs MySQL)
+
+    -- Create child table with foreign key
+CREATE TABLE child (
+    id SERIAL PRIMARY KEY,
+    parent_id INT NOT NULL,
+    CONSTRAINT fk_parent
+        FOREIGN KEY (parent_id)
+        REFERENCES parent(id)
+);
+
+-- Foreign key options
+ON DELETE CASCADE
+ON DELETE SET NULL
+ON DELETE RESTRICT
+
+-- Drop foreign key
+ALTER TABLE child DROP CONSTRAINT fk_parent;
+
+-- Add foreign key
+ALTER TABLE child
+ADD CONSTRAINT fk_parent
+FOREIGN KEY (parent_id)
+REFERENCES parent(id);
+
+--------------------------------------------------------------------------
+CHAPTER 4 — JOINS & QUERYING RELATED DATA (Hands-On)
+Goal of this chapter
+    -Query data from multiple tables
+    -Use different JOIN types
+    -Understand real-world query patterns
+    -Avoid common JOIN mistakes
+
+    -- INNER JOIN
+SELECT * FROM a
+JOIN b ON a.id = b.a_id;
+
+-- LEFT JOIN
+SELECT * FROM a
+LEFT JOIN b ON a.id = b.a_id;
+
+-- RIGHT JOIN
+SELECT * FROM a
+RIGHT JOIN b ON a.id = b.a_id;
+
+-- FULL JOIN
+SELECT * FROM a
+FULL JOIN b ON a.id = b.a_id;
+
+-- Aggregation with JOIN
+SELECT a.col, COUNT(b.id)
+FROM a
+LEFT JOIN b ON a.id = b.a_id
+GROUP BY a.col;
+
+-- HAVING
+HAVING COUNT(b.id) > 0;
+
+INNER JOIN  → matches only
+LEFT JOIN   → all left + matches
+RIGHT JOIN  → all right + matches
+FULL JOIN   → everything
+CROSS JOIN  → cartesian
+NATURAL JOIN → auto (avoid)
+
+LEFT table  = before LEFT JOIN
+RIGHT table = after LEFT JOIN
+
+LEFT JOIN  → keep left table rows
+RIGHT JOIN → keep right table rows
+Swap tables → swap LEFT/RIGHT behavior
+
+--------------------------------------------------------------------------
+CHAPTER 5 — Indexes & Performance Basics (Hands-On)
+Goal of this chapter
+    -Understand what indexes are
+    -Know when PostgreSQL uses indexes
+    -Create and remove indexes
+    -Read basic query plans
+
+    What an Index Is (Very Short)
+    Index = data structure that speeds up reads and slows down writes.
+
+    -- Create index
+CREATE INDEX idx_name ON table(column);
+
+-- Unique index
+CREATE UNIQUE INDEX idx_name ON table(column);
+
+-- Multi-column index
+CREATE INDEX idx_name ON table(col1, col2);
+
+-- Drop index
+DROP INDEX idx_name;
+
+-- Query plan
+EXPLAIN SELECT ...;
+EXPLAIN ANALYZE SELECT ...;
+
+-- Common scans
+Seq Scan
+Index Scan
+Bitmap Index Scan
+
+--------------------------------------------------------------------------
+CHAPTER 6 — Transactions & Concurrency (Hands-On)
+Goal of this chapter
+    -Understand transactions
+    -Use BEGIN / COMMIT / ROLLBACK
+    -Learn isolation levels
+    -See real-world use cases
+
+What Is a Transaction?
+A transaction = a group of SQL statements executed as one unit
+
+Rules (ACID):
+Atomic – all or nothing
+Consistent
+Isolated
+Durable
+
+Isolation Levels:
+----------------
+PostgreSQL supports 4 levels:
+Level	Description
+READ UNCOMMITTED -	Treated as READ COMMITTED
+READ COMMITTED - Default
+REPEATABLE READ - Stable snapshot
+SERIALIZABLE - Highest safety
+
+BEGIN;
+COMMIT;
+ROLLBACK;
+
+SAVEPOINT sp;
+ROLLBACK TO sp;
+
+SET TRANSACTION ISOLATION LEVEL
+READ COMMITTED;
+REPEATABLE READ;
+SERIALIZABLE;
+
+SELECT ... FOR UPDATE;
+
+--------------------------------------------------------------------------
+CHAPTER 7 — Constraints, Keys & Data Integrity (Hands-On)
+Goal of this chapter
+    -Enforce correctness at DB level
+    -Prevent invalid data
+    -Understand production-grade schemas
+
+PRIMARY KEY
+UNIQUE
+NOT NULL
+CHECK (condition)
+
+FOREIGN KEY (col)
+REFERENCES table(col)
+ON DELETE CASCADE
+
+ALTER TABLE t ADD CONSTRAINT c ...
+ALTER TABLE t DROP CONSTRAINT c
+
+--------------------------------------------------------------------------
+CHAPTER 8 — Views, Functions & Procedures (Hands-On)
+Goal of this chapter
+    -Reuse SQL logic
+    -Reduce complex queries in app code
+    -Move safe logic into DB
+
+FUNCTIONS vs PROCEDURES:
+Feature     	    Function	Procedure
+Returns value	    Yes	        No
+Use in SELECT	    Yes	        No
+Transactioncontrol  No	        Yes
+
+When to Use (Real Life)
+Use Views when:
+Same JOIN used everywhere
+Reporting queries
+Cleaner app code
+
+Use Functions when:
+Reusable read logic
+Validation logic
+Calculations
+
+Use Procedures when:
+Multiple writes
+Transaction logic
+Business workflows
+
+-- Views
+CREATE VIEW v AS SELECT ...;
+CREATE OR REPLACE VIEW v AS SELECT ...;
+DROP VIEW v;
+
+-- Functions
+CREATE FUNCTION f() RETURNS type LANGUAGE sql AS $$ $$;
+SELECT f();
+
+-- Procedures
+CREATE PROCEDURE p() LANGUAGE plpgsql AS $$ $$;
+CALL p();
+
+-- Difference
+Function → returns value
+Procedure → executes logic
+
+--------------------------------------------------------------------------
+CHAPTER 9 — JSON, ARRAYS & ADVANCED TYPES (Hands-On)
+Goal of this chapter
+    -Use PostgreSQL as a modern data store
+    -Work with JSON / JSONB
+    -Use arrays natively
+    -Write production-ready queries
+
+JSON vs JSONB:
+-------------
+Type	Difference
+JSON	Stored as text
+JSONB	Binary, indexed, faster
+
+-- JSONB
+col->'key'
+col->>'key'
+col @> '{}'
+jsonb_set()
+
+-- JSON Index
+CREATE INDEX ON table USING GIN (jsonb_col);
+
+-- Arrays
+ARRAY[]
+ANY()
+@>
+
+--------------------------------------------------------------------------
+CHAPTER 10 — PostgreSQL with Next.js (Real App Usage)
+Goal of this chapter
+    -Connect PostgreSQL to Next.js
+    -Use pooling correctly
+    -Write safe queries
+    -Follow production patterns
+--------------------------------------------------------------------------

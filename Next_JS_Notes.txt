@@ -1,0 +1,254 @@
+Next.js Folder Naming Notes
+- Folder names define route paths in the App Router.
+- Hyphens (-) are allowed and recommended for readability & SEO.
+- Example: app/user-profile/page.tsx => /user-profile
+- Use lowercase, no spaces, no special chars.
+- Keep folder names simple and descriptive.
+
+-----------------------------------------------------------------------
+
+ Next.js <Link> Component Notes
+- Used for client-side navigation between routes (no full page reload).
+- Always import from 'next/link' →  import Link from 'next/link'
+- The href path should match your folder structure under the `app/` directory:
+    app/page.tsx               →  "/"
+    app/about/page.tsx         →  "/about"
+    app/server-comp/page.tsx   →  "/server-comp"
+- Use absolute paths starting with "/" (not "./") to avoid routing issues.
+- No need to include file names or extensions (e.g., no /page.tsx or .tsx).
+- Works only for internal routes. For external URLs, use <a href="..."> instead.
+- Example:
+    <Link href="/server-comp">Server Comp</Link>
+- Provides fast, seamless navigation without reloading the page.
+
+-----------------------------------------------------------------------
+
+Next.js <Image> Component Notes
+- Import from 'next/image' →  import Image from 'next/image'
+- Used for optimized images (automatic resizing, lazy loading, and WebP support).
+- Must include `src`, `alt`, `width`, and `height` (or use `fill` for responsive images).
+- Example:
+    import Image from 'next/image'
+    <Image
+      src="/images/profile.jpg"   // from public/images folder
+      alt="User profile photo"
+      width={200}
+      height={200}
+      priority                     // optional: preload for LCP
+    />
+- Local images (from /public) use relative paths:  src="/image.png"
+- Remote images (from URLs) require domain whitelisting in next.config.js
+    Example:
+      images: {
+        domains: ['example.com'],
+      }
+- Use `fill` + parent container with `position: relative` for responsive layouts.
+- Automatically optimizes and serves images through Next.js Image Optimization API.
+-  Benefits: better performance, smaller file sizes, and improved SEO.
+
+-----------------------------------------------------------------------
+
+Next.js Server Component Notes
+ - Server Components are the default in the App Router (no "use client" needed).
+ - Rendered on the server — not included in the client JS bundle (faster & smaller).
+ - Can fetch data directly (async/await, DB queries, APIs, etc.).
+ - Cannot use:
+     • useState, useEffect, useRef
+     • event handlers (onClick, etc.)
+     • browser APIs like window or document
+ - Can import other Server Components and fetch data freely.
+ - Can pass data/props to Client Components.
+ - Example:
+     // No "use client"
+     export default async function Page() {
+       const res = await fetch('https://api.example.com/posts')
+       const posts = await res.json()
+       return (
+         <ul>
+           {posts.map(p => <li key={p.id}>{p.title}</li>)}
+         </ul>
+       )
+     }
+
+-----------------------------------------------------------------------
+
+
+Next.js Client Component Notes
+- Add `"use client"` at the very top of the file (must be the 1st line).
+- Required only if the component uses browser-only features like:
+    • useState, useEffect, useRef
+    • event handlers (onClick, onChange, etc.)
+    • direct access to window/document
+- Server Components (default) cannot use these React hooks.
+- Client Components can import Server Components, but not vice versa.
+- Keep them small and focused to reduce client-side JS bundle size.
+- Example:
+    "use client"
+    import { useState } from 'react'
+    export default function Counter() {
+      const [count, setCount] = useState(0)
+      return <button onClick={() => setCount(c => c + 1)}>{count}</button>
+    }
+
+-----------------------------------------------------------------------
+
+ Dynamic Routing in Next.js (App Router)
+
+Folder structure defines routes.
+Example: app/dynamic-route/[ext-route]/[id]/page.js → URL: /dynamic-route/adminUser/1
+
+Dynamic segments (folders in brackets) become params in the component.
+Example: params = { "ext-route": "adminUser", id: "1" }
+Must access using the exact folder names:
+const { id, "ext-route": extRoute } = params
+
+Page components can be async (server components).
+This allows direct use of await fetch() and await res.json() for data fetching — no need for useEffect or client-side state.
+
+-----------------------------------------------------------------------
+
+loading.js — Loading UI
+
+Purpose:
+
+Used to show a fallback or loading spinner while a page (or layout) is fetching data on the server.
+
+Automatically displayed when an async component (like await fetch()) is still resolving.
+
+How it works:
+
+Create a file named loading.js in the same route folder as your page.js.
+
+Behavior:
+
+Shown automatically during slow data fetches.
+
+Replaced by the actual page once data is ready.
+
+Scoped — a loading.js affects only its folder and sub-routes.
+
+-----------------------------------------------------------------------
+
+error.js — Error Boundary for Server Components
+
+Purpose:
+
+Handles runtime errors (thrown during rendering, data fetching, or event handling).
+
+Similar to React Error Boundaries, but for server and client components.
+
+How it works:
+
+Create error.js in the same folder as your page.js.
+
+It automatically catches errors in that route segment.
+
+Must be a client component (because it uses React state to recover).
+
+Behavior:
+
+Runs if:
+
+fetch() fails (throws)
+
+Component throws an error
+
+The reset() function lets you retry rendering (like reloading data).
+
+-----------------------------------------------------------------------
+
+not-found.js — Custom 404 Page
+
+Purpose:
+
+Displays a custom 404 for a missing page or invalid dynamic route.
+
+Shown when you call notFound() from next/navigation or visit a non-existent route.
+
+How it works:
+
+Create a not-found.js file inside a route folder or globally under app/.
+
+It replaces the default 404 page for that route segment.
+
+-----------------------------------------------------------------------
+
+layout.jsx page
+
+Purpose:
+
+Layouts define UI that wraps around pages (headers, footers, sidebars, containers, providers).
+
+Every route segment can have its own layout.js (or .tsx), and it will wrap all pages under that folder.
+
+The root layout (app/layout.tsx) is required and must include <html> and <body> tags.
+
+Layouts persist between page navigations, meaning they do NOT re-render when switching pages.
+
+Layouts are Server Components by default (no "use client" needed unless using hooks or browser APIs).
+
+A layout must accept children
+
+-----------------------------------------------------------------------
+
+Metadata in Next.js (App Router)
+
+Metadata can only be exported from Server Components.
+Client Components cannot export metadata.
+
+Global metadata is usually defined in app/layout.js (root layout).
+Metadata defined in the root layout applies to all routes in the app.
+
+Page-specific metadata can be defined in individual page.js or nested layout.js files.
+This metadata applies only to that page or route segment.
+
+Metadata can be exported in two ways:
+
+Using a static metadata object
+
+Using an async generateMetadata() function for dynamic values
+
+Only Server Components can export:
+
+export const metadata = { ... }
+
+export async function generateMetadata() { ... }
+
+Metadata is used to define:
+
+<title>
+
+<meta name="description">
+
+Open Graph tags
+
+SEO and social sharing information
+
+-----------------------------------------------------------------------
+
+Backend API Logic in Next.js (App Router)
+
+API routes run on the server and are used for backend logic such as database access, authentication, and validation.
+
+Folder structure inside app/api defines the API routes.
+Example: app/api/users/[id]/route.js → /api/users/1
+
+Dynamic folders (written in brackets) become route parameters.
+Example params object: { id: "1" }
+
+API routes support HTTP methods like GET, POST, PUT, and DELETE.
+Each method is exported separately inside route.js.
+
+Request data is accessed using the Web Fetch API.
+request.json() is used to read the request body.
+request.headers is used to access request headers.
+
+Responses are returned using Response.json() along with HTTP status codes.
+
+Environment variables using process.env are available in API routes and are safe for storing secrets.
+
+Calling APIs differs by component type.
+Server Components require the full domain (http://localhost:3000/api/...).
+Client Components can call APIs using relative paths (/api/...).
+
+-----------------------------------------------------------------------

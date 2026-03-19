@@ -1,0 +1,210 @@
+# psql & PostgreSQL — Rules Cheat Sheet
+
+Use this as a **quick reference** whenever you work with PostgreSQL from the terminal.
+
+---
+
+## 1. Where Am I? (Prompts Matter)
+
+| What you see  | Meaning                               |
+| ------------- | ------------------------------------- |
+| `$`           | Normal Linux terminal                 |
+| `dbname=#`    | Inside psql, ready for a command      |
+| `dbname-#`    | psql is waiting for command to finish |
+| `:` at bottom | Pager (less) is active                |
+
+---
+
+## 2. Golden SQL Rules
+
+### Rule 1 — Every SQL statement ends with `;`
+
+```sql
+SELECT version();
+```
+
+If you forget `;`, psql shows:
+
+```
+dbname-#
+```
+
+---
+
+### Rule 2 — SQL is NOT shell commands
+
+❌ These do NOT work inside psql:
+
+```text
+clear
+~/
+ls
+```
+
+✅ Shell command inside psql (special syntax):
+
+```sql
+\! clear
+```
+
+---
+
+## 3. psql Meta-Commands (Backslash Commands)
+
+Commands starting with `\` are **psql-only**, not SQL.
+
+| Command     | Meaning                |
+| ----------- | ---------------------- |
+| `\q`        | Quit psql              |
+| `\l`        | List databases         |
+| `\du`       | List users             |
+| `\dt`       | List tables            |
+| `\c dbname` | Connect to database    |
+| `\?`        | Help for psql commands |
+| `\h`        | Help for SQL commands  |
+
+---
+
+## 4. How to Exit / Recover
+
+### Exit psql
+
+```sql
+\q
+```
+
+### Cancel broken command
+
+```text
+Ctrl + C
+```
+
+---
+
+## 5. Pager Rules (Very Important)
+
+### What is the pager?
+
+* A scrollable viewer (usually `less`)
+* Used for long output and help
+
+### How to recognize it
+
+* You see `:` or `(END)` at bottom
+
+### Pager controls
+
+| Key     | Action     |
+| ------- | ---------- |
+| `q`     | Quit pager |
+| `Space` | Next page  |
+| `Enter` | Next line  |
+| `/text` | Search     |
+
+### Disable pager (optional)
+
+```sql
+\pset pager off
+```
+
+---
+
+## 6. Common Connection Rules
+
+### Default behavior
+
+```bash
+psql -h localhost -U amonteiro -p 5432
+```
+
+Means:
+
+* user = `amonteiro`
+* database = `amonteiro`
+
+If database doesn’t exist → ❌ error
+
+### Correct connection
+
+```bash
+psql -h localhost -U amonteiro -d postgres -p 5432
+```
+
+---
+
+## 7. Users vs Databases (CRITICAL)
+
+* Linux user ≠ PostgreSQL user
+* PostgreSQL user ≠ PostgreSQL database
+
+You must have:
+
+1. A PostgreSQL **user**
+2. A PostgreSQL **database**
+3. Permission linking them
+
+---
+
+## 8. Variables in psql (`:`)
+
+### Set a variable
+
+```sql
+\set myvar 10
+```
+
+### Use it
+
+```sql
+SELECT :myvar;
+```
+
+`:` means **variable substitution in psql**.
+
+---
+
+## 9. Reading Errors Quickly
+
+| Error                            | Meaning             |
+| -------------------------------- | ------------------- |
+| `password authentication failed` | Wrong user/password |
+| `database does not exist`        | DB missing          |
+| `connection refused`             | Server not running  |
+
+---
+
+## 10. Must-Remember Rules (Short List)
+
+1. SQL ends with `;`
+2. `\q` exits psql
+3. `Ctrl + C` cancels input
+4. `-#` = unfinished command
+5. `:` at bottom = pager → press `q`
+6. Shell commands don’t work inside psql
+
+---
+
+## 11. Recommended Daily Workflow
+
+```bash
+psql -h localhost -U amonteiro -d learnpostgress -p 5432
+```
+
+Inside psql:
+
+```sql
+\dt
+SELECT * FROM table_name;
+\q
+```
+
+---
+
+## Status Checklist
+
+✔ PostgreSQL running
+✔ User exists
+✔ Database exists
+✔ Terminal access works
+
+---
