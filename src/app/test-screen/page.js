@@ -1,6 +1,12 @@
 "use client";
 
-import { InputView, SelectView, ModalView, ButtonView } from "../components";
+import {
+  InputView,
+  SelectView,
+  ModalView,
+  ButtonView,
+  CardView,
+} from "../components";
 
 export default function TestScreen() {
   return (
@@ -15,6 +21,30 @@ export default function TestScreen() {
           disabled={false}
           size="full"
           variant="primary"
+        />
+        <CardView
+          title="Card"
+          description="Card description"
+          image="https://www.rockstargames.com/VI/_next/image?url=%2FVI%2F_next%2Fstatic%2Fmedia%2FJason_and_Lucia_02_With_Logos_landscape.93ab5523.jpg&w=640&q=75"
+          size="xxxl"
+          actions={
+            <div className="w-full flex gap-2">
+              <ButtonView
+                title="Button"
+                onClick={() => null}
+                disabled={false}
+                size="full"
+                variant="primary"
+              />
+              <ButtonView
+                title="Button"
+                onClick={() => null}
+                disabled={false}
+                size="full"
+                variant="primary"
+              />
+            </div>
+          }
         />
       </div>
       <ModalView />

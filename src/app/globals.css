@@ -23,6 +23,8 @@
   --color-border-light: var(--slate-light);
   --color-border-medium: var(--slate-medium);
   --color-border-dark: var(--slate-dark);
+
+  --shadow: 0px 0px 10px 0px var(--slate-medium);
 }
 
 /* @media (prefers-color-scheme: dark) {
