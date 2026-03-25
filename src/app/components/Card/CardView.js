@@ -19,7 +19,7 @@ export default function CardView({
 
   return (
     <div
-      className={`bg-white shadow  flex flex-col justify-center items-center gap-2 p-4 ${sizeClasses[size]} ${className} rounded-md`}
+      className={`bg-white shadow-base  flex flex-col justify-center items-center gap-2 p-4 ${sizeClasses[size]} ${className} rounded-md`}
     >
       <div className="w-full flex flex-col justify-center items-center gap-1 ">
         <h1 className="text-lg font-bold text-center">{title}</h1>
