@@ -10,6 +10,8 @@ const sequelize = new Sequelize(process.env.DATABASE_URL, {
   dialect: process.env.DB_DIALECT,
 });
 
+export default sequelize;
+
 async function testConnection() {
   try {
     await sequelize.authenticate();
