@@ -51,6 +51,28 @@ const PartnerProfile = sequelize.define(
       type: DataTypes.STRING,
       field: "pan_number",
     },
+
+    addressLine1: {
+      type: DataTypes.STRING,
+      field: "address_line_1",
+    },
+    addressLine2: {
+      type: DataTypes.STRING,
+      field: "address_line_2",
+    },
+    city: {
+      type: DataTypes.STRING,
+    },
+    state: {
+      type: DataTypes.STRING,
+    },
+    country: {
+      type: DataTypes.STRING,
+    },
+    zipCode: {
+      type: DataTypes.STRING,
+      field: "zip_code",
+    },
     isVerified: {
       type: DataTypes.BOOLEAN,
       defaultValue: false,
@@ -60,6 +82,16 @@ const PartnerProfile = sequelize.define(
       type: DataTypes.BOOLEAN,
       defaultValue: true,
       field: "is_active",
+    },
+    createdAt: {
+      type: DataTypes.DATE,
+      defaultValue: DataTypes.NOW,
+      field: "created_at",
+    },
+    updatedAt: {
+      type: DataTypes.DATE,
+      defaultValue: DataTypes.NOW,
+      field: "updated_at",
     },
   },
   {

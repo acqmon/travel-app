@@ -1,40 +1,27 @@
 import { DataTypes } from "sequelize";
 import sequelize from "../db/sequelize.js";
-import { ROLE } from "../../constants/role.constant.js";
 
-const User = sequelize.define(
-  "User",
+const PartnerActivity = sequelize.define(
+  "PartnerActivity",
   {
     id: {
       type: DataTypes.UUID,
       primaryKey: true,
       defaultValue: DataTypes.UUIDV4,
     },
-    firstName: {
-      type: DataTypes.STRING,
+    partnerProfileId: {
+      type: DataTypes.UUID,
       allowNull: false,
+      field: "partner_profile_id",
     },
-    lastName: {
-      type: DataTypes.STRING,
+    activityId: {
+      type: DataTypes.UUID,
       allowNull: false,
+      field: "activity_id",
     },
-    email: {
-      type: DataTypes.STRING,
+    price: {
+      type: DataTypes.DECIMAL(10, 2),
       allowNull: false,
-      unique: true,
-      validate: {
-        isEmail: true,
-      },
-    },
-    passwordHash: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      field: "password_hash",
-    },
-    role: {
-      type: DataTypes.ENUM(ROLE.CUSTOMER, ROLE.PARTNER, ROLE.ADMIN),
-      allowNull: false,
-      defaultValue: ROLE.CUSTOMER,
     },
     isActive: {
       type: DataTypes.BOOLEAN,
@@ -53,12 +40,12 @@ const User = sequelize.define(
     },
   },
   {
-    tableName: "users",
+    tableName: "partner_activities",
     timestamps: true,
     createdAt: "created_at",
     updatedAt: "updated_at",
-    indexes: [{ unique: true, fields: ["email"] }],
+    indexes: [{ unique: true, fields: ["partner_profile_id", "activity_id"] }],
   },
 );
 
-export default User;
+export default PartnerActivity;

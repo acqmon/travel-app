@@ -1,40 +1,20 @@
 import { DataTypes } from "sequelize";
 import sequelize from "../db/sequelize.js";
-import { ROLE } from "../../constants/role.constant.js";
 
-const User = sequelize.define(
-  "User",
+const Category = sequelize.define(
+  "Category",
   {
     id: {
       type: DataTypes.UUID,
       primaryKey: true,
       defaultValue: DataTypes.UUIDV4,
     },
-    firstName: {
+    name: {
       type: DataTypes.STRING,
       allowNull: false,
     },
-    lastName: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    email: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      unique: true,
-      validate: {
-        isEmail: true,
-      },
-    },
-    passwordHash: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      field: "password_hash",
-    },
-    role: {
-      type: DataTypes.ENUM(ROLE.CUSTOMER, ROLE.PARTNER, ROLE.ADMIN),
-      allowNull: false,
-      defaultValue: ROLE.CUSTOMER,
+    description: {
+      type: DataTypes.TEXT,
     },
     isActive: {
       type: DataTypes.BOOLEAN,
@@ -53,12 +33,12 @@ const User = sequelize.define(
     },
   },
   {
-    tableName: "users",
+    tableName: "categories",
     timestamps: true,
     createdAt: "created_at",
     updatedAt: "updated_at",
-    indexes: [{ unique: true, fields: ["email"] }],
+    indexes: [{ unique: true, fields: ["name"] }],
   },
 );
 
-export default User;
+export default Category;
