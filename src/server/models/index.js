@@ -6,6 +6,41 @@ import Category from "./category.model.js";
 import ActivityCategoryMapping from "./activity_category_mapping.model.js";
 import PartnerActivity from "./partner_activity.model.js";
 
+
+// User-PartnerProfile
+User.hasOne(PartnerProfile, { foreignKey: "userId" });
+PartnerProfile.belongsTo(User, { foreignKey: "userId" });
+
+// BusinessType-PartnerProfile
+BusinessType.hasMany(PartnerProfile, { foreignKey: "businessTypeId" });
+PartnerProfile.belongsTo(BusinessType, { foreignKey: "businessTypeId" });
+
+// Activity-Category (Many-to-Many)
+Activity.belongsToMany(Category, {
+  through: ActivityCategoryMapping,
+  foreignKey: "activityId",
+});
+Category.belongsToMany(Activity, {
+  through: ActivityCategoryMapping,
+  foreignKey: "categoryId",
+});
+ActivityCategoryMapping.belongsTo(Activity, { foreignKey: "activityId" });
+ActivityCategoryMapping.belongsTo(Category, { foreignKey: "categoryId" });
+
+// PartnerProfile-Activity (Many-to-Many via PartnerActivity)
+PartnerProfile.belongsToMany(Activity, {
+  through: PartnerActivity,
+  foreignKey: "partnerProfileId",
+});
+Activity.belongsToMany(PartnerProfile, {
+  through: PartnerActivity,
+  foreignKey: "activityId",
+});
+PartnerActivity.belongsTo(PartnerProfile, { foreignKey: "partnerProfileId" });
+PartnerActivity.belongsTo(Activity, { foreignKey: "activityId" });
+PartnerProfile.hasMany(PartnerActivity, { foreignKey: "partnerProfileId" });
+Activity.hasMany(PartnerActivity, { foreignKey: "activityId" });
+
 export {
   User,
   PartnerProfile,
@@ -15,19 +50,3 @@ export {
   ActivityCategoryMapping,
   PartnerActivity,
 };
-
-User.hasOne(PartnerProfile, { foreignKey: "userId" });
-PartnerProfile.belongsTo(User, { foreignKey: "userId" });
-
-PartnerProfile.hasMany(PartnerActivity, { foreignKey: "partnerProfileId" });
-PartnerActivity.belongsTo(PartnerProfile, { foreignKey: "partnerProfileId" });
-PartnerProfile.belongsTo(BusinessType, { foreignKey: "businessTypeId" });
-
-Activity.hasMany(ActivityCategoryMapping, { foreignKey: "activityId" });
-
-Category.hasMany(ActivityCategoryMapping, { foreignKey: "categoryId" });
-
-BusinessType.hasMany(PartnerProfile, { foreignKey: "businessTypeId" });
-
-ActivityCategoryMapping.belongsTo(Activity, { foreignKey: "activityId" });
-ActivityCategoryMapping.belongsTo(Category, { foreignKey: "categoryId" });
