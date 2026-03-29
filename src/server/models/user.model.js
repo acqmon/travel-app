@@ -1,6 +1,7 @@
 import { DataTypes } from "sequelize";
 import sequelize from "../db/sequelize.js";
 import { ROLE } from "../../constants/role.constant.js";
+import bcrypt from "bcrypt";
 
 const User = sequelize.define(
   "User",
@@ -58,7 +59,24 @@ const User = sequelize.define(
     createdAt: "created_at",
     updatedAt: "updated_at",
     indexes: [{ unique: true, fields: ["email"] }],
+    hooks: {
+      beforeCreate: async (user) => {
+        if (user.passwordHash) {
+          user.passwordHash = await bcrypt.hash(user.passwordHash, 10);
+        }
+      },
+
+      beforeUpdate: async (user) => {
+        if (user.changed("passwordHash")) {
+          user.passwordHash = await bcrypt.hash(user.passwordHash, 10);
+        }
+      },
+    },
   },
 );
+
+User.prototype.validatePassword = async function (password) {
+  return bcrypt.compare(password, this.passwordHash);
+};
 
 export default User;
