@@ -126,12 +126,12 @@ export async function POST(req) {
         message: "User registered successfully",
         code: 201,
         data: {
-          id: result.id,
-          firstName: result.firstName,
-          lastName: result.lastName,
-          email: result.email,
-          role: result.role,
-          isActive: result.isActive,
+          id: result.user.id,
+          firstName: result.user.firstName,
+          lastName: result.user.lastName,
+          email: result.user.email,
+          role: result.user.role,
+          isActive: result.user.isActive,
           partnerProfile: result.partnerProfile
             ? {
                 id: result.partnerProfile.id,

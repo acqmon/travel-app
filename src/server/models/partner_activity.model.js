@@ -1,5 +1,6 @@
 import { DataTypes } from "sequelize";
 import sequelize from "../db/sequelize.js";
+import { PARTNER_ACTIVITY_STATUS } from "@/constants/status.constant.js";
 
 const PartnerActivity = sequelize.define(
   "PartnerActivity",
@@ -22,6 +23,14 @@ const PartnerActivity = sequelize.define(
     price: {
       type: DataTypes.DECIMAL(10, 2),
       allowNull: false,
+    },
+    status: {
+      type: DataTypes.ENUM(
+        PARTNER_ACTIVITY_STATUS.PENDING,
+        PARTNER_ACTIVITY_STATUS.APPROVED,
+        PARTNER_ACTIVITY_STATUS.REJECTED,
+      ),
+      defaultValue: PARTNER_ACTIVITY_STATUS.PENDING,
     },
     isActive: {
       type: DataTypes.BOOLEAN,
