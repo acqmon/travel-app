@@ -8,6 +8,7 @@ export default function ButtonView({
   rounded = "md",
 }) {
   const sizeClasses = {
+    bx: "h-[40px] w-[40px] text-base",
     sm: "h-[40px] w-[80px] text-sm",
     md: "h-[40px] w-[150px] text-base",
     lg: "h-[40px] w-[200px] text-base",
@@ -34,7 +35,7 @@ export default function ButtonView({
   const disabledClasses = disabled ? "opacity-50 cursor-not-allowed" : "";
   return (
     <button
-      className={`${sizeClasses[size]} ${variantClasses[variant]} cursor-pointer ${disabledClasses} ${className} ${roundedClasses[rounded]}`}
+      className={`${sizeClasses[size]} ${variantClasses[variant]} cursor-pointer hover:opacity-80  ${disabledClasses} ${className} ${roundedClasses[rounded]}`}
       onClick={onClick}
       disabled={disabled}
     >
