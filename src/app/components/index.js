@@ -6,6 +6,7 @@ import CardView from "./Card/CardView";
 import DataTable from "./DataTable/DataTable";
 import PaginationView from "./Pagination/PaginationView";
 import SidebarView from "./Sidebar/SidebarView";
+import TabsView from "./Tabs/TabView";
 
 export {
   InputView,
@@ -16,4 +17,5 @@ export {
   DataTable,
   PaginationView,
   SidebarView,
+  TabsView,
 };

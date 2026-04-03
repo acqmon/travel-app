@@ -9,6 +9,8 @@
   --slate-dark: #475569; /* Focus / Active */
   --slate-medium: #94a3b8; /* Hover */
   --slate-light: #e2e8f0; /* Default border */
+  --green-light: #dcfce7; /* bg-green-100 */
+  --green: #16a34a; /* text-green-600 */
 }
 
 @theme inline {
@@ -26,6 +28,8 @@
   --color-clr-light: var(--slate-light);
   --color-clr-medium: var(--slate-medium);
   --color-clr-dark: var(--slate-dark);
+  --color-green-light: var(--green-light);
+  --color-green: var(--green);
 
   --shadow-base: 0px 0px 10px 0px var(--slate-medium);
 }
