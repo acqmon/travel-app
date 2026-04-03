@@ -23,6 +23,9 @@
   --color-border-light: var(--slate-light);
   --color-border-medium: var(--slate-medium);
   --color-border-dark: var(--slate-dark);
+  --color-clr-light: var(--slate-light);
+  --color-clr-medium: var(--slate-medium);
+  --color-clr-dark: var(--slate-dark);
 
   --shadow-base: 0px 0px 10px 0px var(--slate-medium);
 }

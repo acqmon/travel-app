@@ -22,7 +22,7 @@ const PartnerRegisterPage = () => {
       {/* RIGHT SIDE */}
       <div className="w-full md:w-1/2 h-full flex flex-col p-6 bg-slate-medium">
         {/* Header */}
-        <div className="mb-4">
+        <div className="mb-4 flex flex-col items-center">
           <h2 className="text-2xl font-bold">Partner Registration</h2>
           <p className="text-sm text-gray-500">
             Create your account and start your journey
