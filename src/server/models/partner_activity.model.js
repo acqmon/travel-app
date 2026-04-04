@@ -1,6 +1,6 @@
 import { DataTypes } from "sequelize";
 import sequelize from "../db/sequelize.js";
-import { PARTNER_ACTIVITY_STATUS } from "@/constants/status.constant.js";
+import { PARTNER_ACTIVITY_STATUS } from "../../constants/status.constant.js";
 
 const PartnerActivity = sequelize.define(
   "PartnerActivity",
