@@ -9,6 +9,12 @@ export const NAVIGATION = {
     { label: "Activities", path: PATHS.ADMIN.ACTIVITIES },
     { label: "Listings", path: PATHS.ADMIN.LISTINGS },
   ],
-  [ROLE.PARTNER]: [{ label: "Dashboard", path: PATHS.PARTNER.DASHBOARD }],
-  [ROLE.CUSTOMER]: [{ label: "Dashboard", path: PATHS.CUSTOMER.DASHBOARD }],
+  [ROLE.PARTNER]: [
+    { label: "Dashboard", path: PATHS.PARTNER.DASHBOARD },
+    { label: "Activities", path: PATHS.PARTNER.ACTIVITIES },
+  ],
+  [ROLE.CUSTOMER]: [
+    { label: "Dashboard", path: PATHS.CUSTOMER.DASHBOARD },
+    { label: "Activities", path: PATHS.CUSTOMER.ACTIVITIES },
+  ],
 };

@@ -8,8 +8,10 @@ export const PATHS = {
   },
   PARTNER: {
     DASHBOARD: "/partner/dashboard",
+    ACTIVITIES: "/partner/activities",
   },
   CUSTOMER: {
     DASHBOARD: "/dashboard",
+    ACTIVITIES: "/activities",
   },
 };
