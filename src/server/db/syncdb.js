@@ -1,5 +1,13 @@
 import sequelize from "./sequelize.js";
-import { User } from "../models/index.js";
+import {
+  User,
+  PartnerProfile,
+  BusinessType,
+  Activity,
+  Category,
+  ActivityCategoryMapping,
+  PartnerActivity,
+} from "../models/index.js";
 
 async function syncDB() {
   try {

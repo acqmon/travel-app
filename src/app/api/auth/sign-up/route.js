@@ -64,6 +64,7 @@ export async function POST(req) {
         const {
           businessTypeId,
           businessName,
+          description,
           phone,
           alternatePhone,
           contactEmail,
@@ -100,6 +101,7 @@ export async function POST(req) {
             userId: user.id,
             businessTypeId,
             businessName,
+            description,
             phone,
             alternatePhone,
             contactEmail,
