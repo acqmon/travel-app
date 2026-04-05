@@ -3,12 +3,6 @@ import pg from "pg";
 import dotenv from "dotenv";
 import path from "path";
 
-import bcrypt from "bcrypt";
-
-const password = "Admin@123";
-const hash = await bcrypt.hash(password, 10);
-console.log(hash);
-
 dotenv.config({
   path: path.resolve(process.cwd(), "../../../.env.local"),
 });
