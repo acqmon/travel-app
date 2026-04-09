@@ -5,6 +5,9 @@ import { User } from "@/server/models";
 const JWT_SECRET = process.env.JWT_SECRET;
 
 export async function POST(req) {
+  if (!JWT_SECRET) {
+    throw new Error("JWT_SECRET not defined");
+  }
   try {
     const body = await req.json();
     const { email, password } = body;
@@ -71,7 +74,7 @@ export async function POST(req) {
 
     response.cookies.set("token", token, {
       httpOnly: true,
-      secure: false,
+      secure: process.env.NODE_ENV === "production",
       sameSite: "strict",
       path: "/",
       maxAge: 60 * 60 * 24 * 7, // 7 days

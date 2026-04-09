@@ -7,6 +7,7 @@ async function request({ path, method = "GET", data, headers = {} }) {
   try {
     const response = await fetch(url, {
       method,
+      credentials: "include",
       headers: {
         "Content-Type": "application/json",
         ...headers,
