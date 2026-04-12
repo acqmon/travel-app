@@ -95,6 +95,18 @@ export async function POST(req) {
           throw new Error("Invalid website URL");
         }
 
+        if (city && typeof city !== "string") {
+          throw new Error("City must be a string");
+        }
+
+        if (state && typeof state !== "string") {
+          throw new Error("State must be a string");
+        }
+
+        if (country && typeof country !== "string") {
+          throw new Error("Country must be a string");
+        }
+
         // Safe creation (whitelisted fields only)
         createdPartnerProfile = await PartnerProfile.create(
           {
@@ -156,6 +168,10 @@ export async function POST(req) {
 
     if (error.message.includes("already")) {
       return NextResponse.json({ message: error.message }, { status: 409 });
+    }
+
+    if (error.message) {
+      return NextResponse.json({ message: error.message }, { status: 400 });
     }
 
     return NextResponse.json(

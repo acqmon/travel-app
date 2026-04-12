@@ -69,6 +69,7 @@ export default function SelectView({
   placeholder,
   disabled,
   error,
+  ...props
 }) {
   return (
     <div className="w-full flex flex-col gap-0.5">
@@ -85,6 +86,7 @@ export default function SelectView({
         placeholder={placeholder}
         disabled={disabled}
         styles={styles}
+        {...props}
       />
       {<p className="h-4 text-xs text-red-500">{error ? error : ""}</p>}
     </div>
