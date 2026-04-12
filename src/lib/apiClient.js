@@ -33,6 +33,11 @@ async function request({ path, method = "GET", data, headers = {} }) {
     return responseData;
   } catch (err) {
     console.error("API Error:", err);
+    console.error("API Error FULL:", {
+      message: err.message,
+      status: err.status,
+      response: err.response,
+    });
 
     throw {
       status: err.status || 500,

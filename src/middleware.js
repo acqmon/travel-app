@@ -4,6 +4,7 @@ import { NextResponse } from "next/server";
 import { checkAuth } from "@/lib/auth";
 import { checkRole } from "@/lib/role";
 import { publicRoutes } from "@/config/routeAccess";
+import { getDashboardByRole } from "@/lib/redirect";
 
 export async function middleware(req) {
   const { pathname } = req.nextUrl;
@@ -17,25 +18,26 @@ export async function middleware(req) {
     (route) => pathname === route || pathname.startsWith(route + "/"),
   );
 
-  //  Always check auth ONCE
   const { user, error } = await checkAuth(req);
 
-  // 1. Public routes
-  if (isPublic) {
-    // If logged in, block access to login page
-    if (user && pathname === "/login") {
-      return NextResponse.redirect(new URL("/dashboard", req.url));
-    }
+  // ✅ 1. If user is logged in → block /login and /
+  if (user && (pathname === "/login" || pathname === "/")) {
+    console.log("req.url", req.url);
+    const redirectUrl = new URL(getDashboardByRole(user.role), req.url);
+    return NextResponse.redirect(redirectUrl);
+  }
 
+  // ✅ 2. Public routes
+  if (isPublic) {
     return NextResponse.next();
   }
 
-  // 2. Protected routes (not public)
+  // ✅ 3. Protected routes → always go to clean /login
   if (error || !user) {
     return NextResponse.redirect(new URL("/login", req.url));
   }
 
-  // 3. Role check
+  // ✅ 4. Role check
   const allowed = checkRole(user, pathname);
 
   if (!allowed) {

@@ -1,9 +1,9 @@
-import { ROLES } from "@/constants/role.constant";
+import { ROLE } from "@/constants/role.constant";
 
 export const routeAccess = {
-  "/admin": [ROLES.ADMIN],
-  "/partner": [ROLES.PARTNER],
-  "/dashboard": [ROLES.CUSTOMER],
+  "/admin": [ROLE.ADMIN],
+  "/partner": [ROLE.PARTNER],
+  "/dashboard": [ROLE.CUSTOMER],
 };
 
-export const publicRoutes = ["/login", "/register", "/"];
+export const publicRoutes = ["/login", "/register"];

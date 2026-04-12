@@ -1,4 +1,4 @@
-import { routeAccess } from "@/lib/config/routeAccess";
+import { routeAccess } from "@/config/routeAccess";
 
 export function checkRole(user, pathname) {
   const matchedRoute = Object.keys(routeAccess).find((route) =>

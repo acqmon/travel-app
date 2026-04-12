@@ -2,11 +2,13 @@
 import { useState } from "react";
 import { InputView, ButtonView, CardView } from "../components";
 import { useSignIn } from "@/service/auth.js/auth.queries";
-import { useRouter } from "next/navigation";
-import { PATHS } from "@/constants/paths.constant";
+import { useRouter, useSearchParams } from "next/navigation";
+import { getDashboardByRole } from "@/lib/redirect";
 
 const Login = () => {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirect = searchParams.get("redirect");
   const { mutate: signIn, isPending, isError, error } = useSignIn();
 
   const [form, setForm] = useState({
@@ -24,9 +26,13 @@ const Login = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    console.log("form", form);
     signIn(form, {
-      onSuccess: () => {
-        router.push(PATHS.ADMIN.DASHBOARD);
+      onSuccess: (data) => {
+        const role = data?.data?.role;
+        console.log("role", role);
+
+        router.replace(redirect || getDashboardByRole(role));
       },
     });
   };
