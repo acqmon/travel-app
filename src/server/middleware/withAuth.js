@@ -19,8 +19,6 @@ export function withAuth(handler, roles = []) {
 
       return await handler(req, context, user);
     } catch (error) {
-      console.error("API Error:", error);
-
       return NextResponse.json(
         {
           message: error.message || "Internal server error",

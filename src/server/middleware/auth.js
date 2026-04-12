@@ -8,13 +8,11 @@ export function verifyAuth(req) {
       throw new Error("JWT_SECRET is not defined");
     }
 
-    const authHeader = req.headers.get("authorization");
+    const token = req.cookies.get("token")?.value;
 
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    if (!token) {
       return { error: "Unauthorized" };
     }
-
-    const token = authHeader.split(" ")[1];
 
     const decoded = jwt.verify(token, JWT_SECRET);
 

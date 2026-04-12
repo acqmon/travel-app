@@ -1,5 +1,10 @@
 import { useMutation } from "@tanstack/react-query";
-import { registerCustomer, registerPartner, signIn } from "./auth.service";
+import {
+  registerCustomer,
+  registerPartner,
+  signIn,
+  signOut,
+} from "./auth.service";
 
 export const useSignIn = () => {
   return useMutation({
@@ -10,6 +15,12 @@ export const useSignIn = () => {
     onError: (error) => {
       console.log("Sign in failed", error);
     },
+  });
+};
+
+export const useSignOut = () => {
+  return useMutation({
+    mutationFn: signOut,
   });
 };
 
