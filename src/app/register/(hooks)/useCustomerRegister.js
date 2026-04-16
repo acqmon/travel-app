@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useRegisterCustomer } from "@/service/auth.js/auth.queries";
 import { ROLE } from "@/constants/role.constant";
+import { toast } from "react-toastify";
 
 export const useCustomerRegister = () => {
   const { mutate: registerCustomer, isPending } = useRegisterCustomer();
@@ -39,11 +40,12 @@ export const useCustomerRegister = () => {
     };
 
     registerCustomer(payload, {
-      onSuccess: () => {
+      onSuccess: (response) => {
+        toast.success(response.data.message || "Account created successfully");
         router.push("/login");
       },
       onError: (error) => {
-        alert(error?.response?.data?.message || "Registration failed");
+        toast.error(error.message || "Registration failed");
       },
     });
   };

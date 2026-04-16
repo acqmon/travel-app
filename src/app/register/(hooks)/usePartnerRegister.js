@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useRegisterPartner } from "@/service/auth.js/auth.queries";
 import { useBusinessTypes } from "@/service/master/master.queries";
 import { ROLE } from "@/constants/role.constant";
+import { toast } from "react-toastify";
 
 export const usePartnerRegister = () => {
   const { mutate: registerPartner } = useRegisterPartner();
@@ -80,7 +81,13 @@ export const usePartnerRegister = () => {
     };
 
     registerPartner(payload, {
-      onSuccess: () => router.push("/login"),
+      onSuccess: (response) => {
+        toast.success(response.data.message || "Account created successfully");
+        router.push("/login");
+      },
+      onError: (error) => {
+        toast.error(error.message || "Registration failed");
+      },
     });
   };
 

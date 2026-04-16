@@ -7,6 +7,7 @@ import DataTable from "./DataTable/DataTable";
 import PaginationView from "./Pagination/PaginationView";
 import SidebarView from "./Sidebar/SidebarView";
 import TabsView from "./Tabs/TabView";
+import AlertView from "./Alert/AlertView";
 
 export {
   InputView,
@@ -18,4 +19,5 @@ export {
   PaginationView,
   SidebarView,
   TabsView,
+  AlertView,
 };

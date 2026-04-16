@@ -9,12 +9,6 @@ import {
 export const useSignIn = () => {
   return useMutation({
     mutationFn: signIn,
-    onSuccess: (data) => {
-      console.log("Sign in successful", data);
-    },
-    onError: (error) => {
-      console.log("Sign in failed", error);
-    },
   });
 };
 
@@ -27,23 +21,11 @@ export const useSignOut = () => {
 export const useRegisterPartner = () => {
   return useMutation({
     mutationFn: registerPartner,
-    onSuccess: (data) => {
-      console.log("Registration successful", data);
-    },
-    onError: (error) => {
-      console.log("Registration failed", error);
-    },
   });
 };
 
 export const useRegisterCustomer = () => {
   return useMutation({
     mutationFn: registerCustomer,
-    onSuccess: (data) => {
-      console.log("Registration successful", data);
-    },
-    onError: (error) => {
-      console.log("Registration failed", error);
-    },
   });
 };

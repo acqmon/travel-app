@@ -4,6 +4,7 @@ import { InputView, ButtonView, CardView } from "../components";
 import { useSignIn } from "@/service/auth.js/auth.queries";
 import { useRouter, useSearchParams } from "next/navigation";
 import { getDashboardByRole } from "@/lib/redirect";
+import { toast } from "react-toastify";
 
 const Login = () => {
   const router = useRouter();
@@ -31,8 +32,11 @@ const Login = () => {
       onSuccess: (data) => {
         const role = data?.data?.role;
         console.log("role", role);
-
+        toast.success(data.message || "Login successful");
         router.replace(redirect || getDashboardByRole(role));
+      },
+      onError: (error) => {
+        toast.error(error.message || "Login failed");
       },
     });
   };
