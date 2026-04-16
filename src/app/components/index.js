@@ -8,6 +8,7 @@ import PaginationView from "./Pagination/PaginationView";
 import SidebarView from "./Sidebar/SidebarView";
 import TabsView from "./Tabs/TabView";
 import AlertView from "./Alert/AlertView";
+import LoaderView from "./Loader/LoaderView";
 
 export {
   InputView,
@@ -20,4 +21,5 @@ export {
   SidebarView,
   TabsView,
   AlertView,
+  LoaderView,
 };

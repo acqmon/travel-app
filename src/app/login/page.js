@@ -5,6 +5,7 @@ import { useSignIn } from "@/service/auth.js/auth.queries";
 import { useRouter, useSearchParams } from "next/navigation";
 import { getDashboardByRole } from "@/lib/redirect";
 import { toast } from "react-toastify";
+import LoaderView from "@/app/components/Loader/LoaderView";
 
 const Login = () => {
   const router = useRouter();
@@ -29,10 +30,10 @@ const Login = () => {
     e.preventDefault();
     console.log("form", form);
     signIn(form, {
-      onSuccess: (data) => {
-        const role = data?.data?.role;
+      onSuccess: (response) => {
+        const role = response?.data?.role;
         console.log("role", role);
-        toast.success(data.message || "Login successful");
+        toast.success(response.message || "Login successful");
         router.replace(redirect || getDashboardByRole(role));
       },
       onError: (error) => {
@@ -71,15 +72,18 @@ const Login = () => {
   };
 
   return (
-    <div className="h-screen w-full flex items-center justify-center">
-      <CardView
-        size="lg"
-        title="Login"
-        description="Enter your credentials to login"
-        children={renderChildren()}
-        actions={renderActions()}
-      />
-    </div>
+    <>
+      {isPending && <LoaderView label="Logging in..." />}
+      <div className="h-screen w-full flex items-center justify-center">
+        <CardView
+          size="lg"
+          title="Login"
+          description="Enter your credentials to login"
+          children={renderChildren()}
+          actions={renderActions()}
+        />
+      </div>
+    </>
   );
 };
 

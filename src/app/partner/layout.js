@@ -5,14 +5,17 @@ import { ROLE } from "@/constants/role.constant";
 import { ButtonView } from "../components";
 import { useSignOut } from "@/service/auth.js/auth.queries";
 import { useRouter } from "next/navigation";
+import LoaderView from "@/app/components/Loader/LoaderView";
+import { toast } from "react-toastify";
 
 const menu = NAVIGATION[ROLE.PARTNER];
 
 export default function PartnerLayout({ children }) {
-  const { mutate: signOut } = useSignOut();
+  const { mutate: signOut, isPending } = useSignOut();
   const router = useRouter();
   return (
     <div className="flex h-screen bg-background">
+      {isPending && <LoaderView label="Logging out..." />}
       {/* Sidebar */}
       <SidebarView title="Partner Panel" menu={menu} />
 
@@ -22,11 +25,15 @@ export default function PartnerLayout({ children }) {
         <header className="h-16 border-b border-clr-light bg-white flex items-center justify-end px-6">
           {/* Future header content */}
           <ButtonView
-            title="Logout"
+            title={isPending ? "Logging out..." : "Logout"}
             onClick={() => {
               signOut(undefined, {
-                onSuccess: () => {
-                  router.push("/login"); // redirect
+                onSuccess: (response) => {
+                  toast.success(response.message || "Logout successful");
+                  router.replace("/login"); // redirect
+                },
+                onError: (error) => {
+                  toast.error(error.message || "Logout failed");
                 },
               });
             }}

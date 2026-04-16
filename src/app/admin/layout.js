@@ -5,14 +5,17 @@ import { ROLE } from "@/constants/role.constant";
 import { ButtonView } from "../components";
 import { useSignOut } from "@/service/auth.js/auth.queries";
 import { useRouter } from "next/navigation";
+import { toast } from "react-toastify";
+import LoaderView from "@/app/components/Loader/LoaderView";
 
 const menu = NAVIGATION[ROLE.ADMIN];
 
 export default function AdminLayout({ children }) {
-  const { mutate: signOut } = useSignOut();
+  const { mutate: signOut, isPending } = useSignOut();
   const router = useRouter();
   return (
     <div className="flex h-screen bg-background">
+      {isPending && <LoaderView label="Logging out..." />}
       {/* Sidebar */}
       <SidebarView title="Admin Panel" menu={menu} />
 
@@ -22,14 +25,19 @@ export default function AdminLayout({ children }) {
         <header className="h-16 border-b border-clr-light bg-white flex items-center justify-end px-6">
           {/* Future header content */}
           <ButtonView
-            title="Logout"
+            title={isPending ? "Logging out..." : "Logout"}
             onClick={() => {
               signOut(undefined, {
-                onSuccess: () => {
-                  router.push("/login"); // redirect
+                onSuccess: (response) => {
+                  toast.success(response.message || "Logout successful");
+                  router.replace("/login");
+                },
+                onError: (error) => {
+                  toast.error(error.message || "Logout failed");
                 },
               });
             }}
+            disabled={isPending}
             variant="primary"
           />
         </header>
