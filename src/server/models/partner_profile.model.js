@@ -1,5 +1,6 @@
 import { DataTypes } from "sequelize";
 import sequelize from "../db/sequelize.js";
+import { PARTNER_STATUS } from "../../constants/status.constant.js";
 
 const PartnerProfile = sequelize.define(
   "PartnerProfile",
@@ -40,6 +41,15 @@ const PartnerProfile = sequelize.define(
       field: "contact_email",
       validate: { isEmail: true },
     },
+    status: {
+      type: DataTypes.ENUM(
+        PARTNER_STATUS.PENDING,
+        PARTNER_STATUS.APPROVED,
+        PARTNER_STATUS.REJECTED,
+      ),
+      allowNull: true,
+      defaultValue: PARTNER_STATUS.PENDING,
+    },
     website: {
       type: DataTypes.STRING,
       validate: { isUrl: true },
@@ -73,11 +83,11 @@ const PartnerProfile = sequelize.define(
       type: DataTypes.STRING,
       field: "zip_code",
     },
-    isVerified: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: false,
-      field: "is_verified",
-    },
+    // isVerified: {
+    //   type: DataTypes.BOOLEAN,
+    //   defaultValue: false,
+    //   field: "is_verified",
+    // },
     isActive: {
       type: DataTypes.BOOLEAN,
       defaultValue: true,
