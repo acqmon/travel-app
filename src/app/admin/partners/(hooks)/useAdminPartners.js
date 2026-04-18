@@ -1,57 +1,39 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import { usePartners } from "@/service/partner/partner.queries";
+import { PARTNER_STATUS } from "@/constants/status.constant";
 
 export const useAdminPartners = () => {
-  const [activeTab, setActiveTab] = useState("PENDING");
+  const [activeTab, setActiveTab] = useState(PARTNER_STATUS.PENDING);
 
   const tabs = [
-    { label: "Pending", value: "PENDING" },
-    { label: "Approved", value: "APPROVED" },
-    { label: "Rejected", value: "REJECTED" },
+    { label: "Pending", value: PARTNER_STATUS.PENDING },
+    { label: "Approved", value: PARTNER_STATUS.APPROVED },
+    { label: "Rejected", value: PARTNER_STATUS.REJECTED },
   ];
 
-  // Replace later with API
-  const data = [
-    {
-      id: "1",
-      name: "John Doe",
-      email: "john@example.com",
-      businessName: "ABC Travels",
-      phone: "9876543210",
-      city: "Goa",
-      status: "PENDING",
-    },
-    {
-      id: "2",
-      name: "Jane Smith",
-      email: "jane@example.com",
-      businessName: "XYZ Tours",
-      phone: "9123456780",
-      city: "Udupi",
-      status: "APPROVED",
-    },
-    {
-      id: "3",
-      name: "Rahul Kumar",
-      email: "rahul@example.com",
-      businessName: "Travel Pro",
-      phone: "9988776655",
-      city: "Bangalore",
-      status: "REJECTED",
-    },
-  ];
+  //  memoize filters (IMPORTANT)
+  const filters = useMemo(
+    () => ({
+      status: activeTab,
+      page: 1,
+      limit: 10,
+    }),
+    [activeTab],
+  );
 
-  const filteredData = useMemo(() => {
-    return data.filter((item) => item.status === activeTab);
-  }, [activeTab, data]);
+  //  API call
+  const { data = [], isLoading } = usePartners(filters);
 
   const handleApprove = (row) => {
     console.log("Approve:", row);
+    // TODO: call mutation
   };
 
   const handleReject = (row) => {
     console.log("Reject:", row);
+    // TODO: call mutation
   };
 
   const handleView = (row) => {
@@ -62,7 +44,8 @@ export const useAdminPartners = () => {
     activeTab,
     setActiveTab,
     tabs,
-    filteredData,
+    data,
+    isLoading,
     handleApprove,
     handleReject,
     handleView,

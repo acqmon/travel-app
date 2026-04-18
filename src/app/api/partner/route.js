@@ -3,28 +3,31 @@ import { withAuth } from "@/server/middleware/withAuth";
 import { User, PartnerProfile } from "@/server/models";
 import { ROLE } from "@/constants/role.constant";
 
-export const GET = withAuth(
+export const POST = withAuth(
   async (req) => {
-    const { searchParams } = new URL(req.url);
-    const status = searchParams.get("status");
+    const body = await req.json();
 
-    let whereClause = {};
+    const {
+      status,
+      search, // name/email/business
+      city,
+      page = 1,
+      limit = 10,
+    } = body;
 
-    if (status === "PENDING") {
-      whereClause = {
-        isVerified: false,
-        isActive: true,
-      };
-    } else if (status === "APPROVED") {
-      whereClause = {
-        isVerified: true,
-        isActive: true,
-      };
-    } else if (status === "REJECTED") {
-      whereClause = {
-        isActive: false,
-      };
+    const whereClause = {};
+
+    // Status filter
+    if (status) {
+      whereClause.status = status;
     }
+
+    // City filter
+    if (city) {
+      whereClause.city = city;
+    }
+
+    const offset = (page - 1) * limit;
 
     const partners = await PartnerProfile.findAll({
       where: whereClause,
@@ -32,30 +35,32 @@ export const GET = withAuth(
         {
           model: User,
           attributes: ["id", "firstName", "lastName", "email"],
+          where: search
+            ? {
+                // 🔍 search in user fields
+                [Op.or]: [
+                  { firstName: { [Op.iLike]: `%${search}%` } },
+                  { lastName: { [Op.iLike]: `%${search}%` } },
+                  { email: { [Op.iLike]: `%${search}%` } },
+                ],
+              }
+            : undefined,
         },
       ],
+      limit,
+      offset,
       order: [["created_at", "DESC"]],
     });
 
-    const formatted = partners.map((item) => {
-      let status = "PENDING";
-
-      if (!item.isActive) {
-        status = "REJECTED";
-      } else if (item.isVerified) {
-        status = "APPROVED";
-      }
-
-      return {
-        id: item.id,
-        name: `${item.User.firstName} ${item.User.lastName}`,
-        email: item.User.email,
-        businessName: item.businessName,
-        phone: item.phone,
-        city: item.city,
-        status,
-      };
-    });
+    const formatted = partners.map((item) => ({
+      id: item.id,
+      name: `${item.User.firstName} ${item.User.lastName}`,
+      email: item.User.email,
+      businessName: item.businessName,
+      phone: item.phone,
+      city: item.city,
+      status: item.status,
+    }));
 
     return NextResponse.json(
       {

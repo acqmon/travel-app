@@ -6,7 +6,8 @@ export default function AdminPartnersView({
   activeTab,
   setActiveTab,
   tabs,
-  filteredData,
+  data,
+  isLoading,
   handleApprove,
   handleReject,
   handleView,
@@ -90,7 +91,8 @@ export default function AdminPartnersView({
       {/* Table */}
       <DataTable
         columns={columns}
-        data={filteredData}
+        data={data?.data}
+        progressPending={isLoading}
         pagination
         highlightOnHover
         responsive
