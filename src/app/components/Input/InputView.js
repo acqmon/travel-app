@@ -1,7 +1,7 @@
 export default function InputView({
   title,
   name,
-  required = true,
+  required = false,
   className,
   type,
   value,
@@ -9,12 +9,16 @@ export default function InputView({
   placeholder,
   disabled,
   error,
+  variant = "",
 }) {
+  const hideMeta = variant === "search";
   return (
     <div className="w-full flex flex-col gap-0.5">
-      <label className="text-sm">
-        {title} {required && <span className="text-red-500">*</span>}
-      </label>
+      {!hideMeta && (
+        <label className="text-sm">
+          {title} {required && <span className="text-red-500">*</span>}
+        </label>
+      )}
       <input
         name={name}
         required={required}
@@ -25,7 +29,9 @@ export default function InputView({
         placeholder={placeholder}
         disabled={disabled}
       />
-      {<p className="h-4 text-xs text-red-500">{error ? error : ""}</p>}
+      {!hideMeta && (
+        <p className="h-4 text-xs text-red-500">{error ? error : ""}</p>
+      )}
     </div>
   );
 }

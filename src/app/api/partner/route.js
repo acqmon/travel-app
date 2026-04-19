@@ -2,46 +2,38 @@ import { NextResponse } from "next/server";
 import { withAuth } from "@/server/middleware/withAuth";
 import { User, PartnerProfile } from "@/server/models";
 import { ROLE } from "@/constants/role.constant";
+import { Op } from "sequelize";
 
 export const POST = withAuth(
   async (req) => {
     const body = await req.json();
 
-    const {
-      status,
-      search, // name/email/business
-      city,
-      page = 1,
-      limit = 10,
-    } = body;
+    const { status, search, city, page = 1, limit = 10 } = body;
 
     const whereClause = {};
 
-    // Status filter
-    if (status) {
-      whereClause.status = status;
-    }
+    if (status) whereClause.status = status;
+    if (city) whereClause.city = city;
 
-    // City filter
-    if (city) {
-      whereClause.city = city;
+    if (search) {
+      whereClause[Op.or] = [{ businessName: { [Op.like]: `%${search}%` } }];
     }
 
     const offset = (page - 1) * limit;
 
-    const partners = await PartnerProfile.findAll({
+    const { rows, count } = await PartnerProfile.findAndCountAll({
       where: whereClause,
       include: [
         {
           model: User,
           attributes: ["id", "firstName", "lastName", "email"],
+          required: false,
           where: search
             ? {
-                // 🔍 search in user fields
                 [Op.or]: [
-                  { firstName: { [Op.iLike]: `%${search}%` } },
-                  { lastName: { [Op.iLike]: `%${search}%` } },
-                  { email: { [Op.iLike]: `%${search}%` } },
+                  { firstName: { [Op.like]: `%${search}%` } },
+                  { lastName: { [Op.like]: `%${search}%` } },
+                  { email: { [Op.like]: `%${search}%` } },
                 ],
               }
             : undefined,
@@ -52,23 +44,30 @@ export const POST = withAuth(
       order: [["created_at", "DESC"]],
     });
 
-    const formatted = partners.map((item) => ({
+    const formatted = rows.map((item) => ({
       id: item.id,
-      name: `${item.User.firstName} ${item.User.lastName}`,
-      email: item.User.email,
+      name: `${item.User?.firstName || ""} ${item.User?.lastName || ""}`,
+      email: item.User?.email,
       businessName: item.businessName,
       phone: item.phone,
       city: item.city,
       status: item.status,
     }));
 
-    return NextResponse.json(
-      {
-        message: "Partners fetched successfully",
-        data: formatted,
+    const totalPages = Math.ceil(count / limit);
+
+    return NextResponse.json({
+      message: "Partners fetched successfully",
+      data: formatted,
+      pagination: {
+        total: count,
+        page,
+        limit,
+        totalPages,
+        hasNext: page < totalPages,
+        hasPrevious: page > 1,
       },
-      { status: 200 },
-    );
+    });
   },
   [ROLE.ADMIN],
 );

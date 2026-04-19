@@ -1,11 +1,14 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { usePartners } from "@/service/partner/partner.queries";
 import { PARTNER_STATUS } from "@/constants/status.constant";
 
 export const useAdminPartners = () => {
   const [activeTab, setActiveTab] = useState(PARTNER_STATUS.PENDING);
+
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
 
   const tabs = [
     { label: "Pending", value: PARTNER_STATUS.PENDING },
@@ -13,27 +16,32 @@ export const useAdminPartners = () => {
     { label: "Rejected", value: PARTNER_STATUS.REJECTED },
   ];
 
-  //  memoize filters (IMPORTANT)
+  const handleTabChange = (tab) => {
+    setPage(1); // reset first
+    setActiveTab(tab); // then change tab
+  };
+
   const filters = useMemo(
     () => ({
       status: activeTab,
-      page: 1,
-      limit: 10,
+      page,
+      limit,
     }),
-    [activeTab],
+    [activeTab, page, limit],
   );
 
-  //  API call
-  const { data = [], isLoading } = usePartners(filters);
+  useEffect(() => {
+    console.log("page", page);
+  }, [limit]);
+
+  const { data, isLoading } = usePartners(filters);
 
   const handleApprove = (row) => {
     console.log("Approve:", row);
-    // TODO: call mutation
   };
 
   const handleReject = (row) => {
     console.log("Reject:", row);
-    // TODO: call mutation
   };
 
   const handleView = (row) => {
@@ -42,10 +50,16 @@ export const useAdminPartners = () => {
 
   return {
     activeTab,
-    setActiveTab,
+    setActiveTab: handleTabChange,
     tabs,
     data,
     isLoading,
+
+    page,
+    setPage,
+    limit,
+    setLimit,
+
     handleApprove,
     handleReject,
     handleView,

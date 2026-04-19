@@ -9,6 +9,8 @@ import SidebarView from "./Sidebar/SidebarView";
 import TabsView from "./Tabs/TabView";
 import AlertView from "./Alert/AlertView";
 import LoaderView from "./Loader/LoaderView";
+import PageSize from "./PageSize/PageSize";
+import TableFooter from "./TableFooter/TableFooter";
 
 export {
   InputView,
@@ -22,4 +24,6 @@ export {
   TabsView,
   AlertView,
   LoaderView,
+  PageSize,
+  TableFooter,
 };

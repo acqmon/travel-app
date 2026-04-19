@@ -1,6 +1,6 @@
 "use client";
 
-import { ButtonView, DataTable, TabsView } from "@/app/components";
+import { ButtonView, DataTable, TabsView, InputView } from "@/app/components";
 
 export default function AdminPartnersView({
   activeTab,
@@ -11,7 +11,14 @@ export default function AdminPartnersView({
   handleApprove,
   handleReject,
   handleView,
+  page,
+  setPage,
+  limit,
+  setLimit,
 }) {
+  const partners = data?.data || [];
+  const pagination = data?.pagination || {};
+
   const columns = [
     {
       name: "Partner",
@@ -79,24 +86,42 @@ export default function AdminPartnersView({
   ];
 
   return (
-    <div className="w-full flex flex-col gap-4">
+    <div className="w-full h-full flex flex-col gap-4 overflow-hidden">
       {/* Header */}
-      <div className="flex justify-between items-center">
+      <div className="h-[5%] flex justify-between items-center">
         <h3 className="font-semibold text-lg">Partners</h3>
       </div>
 
       {/* Tabs */}
-      <TabsView tabs={tabs} activeTab={activeTab} onChange={setActiveTab} />
+      <div className=" w-full h-[10%] flex items-center justify-between gap-2">
+        <TabsView tabs={tabs} activeTab={activeTab} onChange={setActiveTab} />
+        <div className="flex items-center gap-2">
+          <InputView placeholder="Search" variant="search" />
+          <ButtonView title={"Search"} />
+        </div>
+      </div>
 
       {/* Table */}
-      <DataTable
-        columns={columns}
-        data={data?.data}
-        progressPending={isLoading}
-        pagination
-        highlightOnHover
-        responsive
-      />
+      <div className="table-pagination-wrapper h-[85%] ">
+        <DataTable
+          key={activeTab}
+          columns={columns}
+          data={partners}
+          progressPending={isLoading}
+          highlightOnHover
+          responsive
+          pagination
+          paginationServer
+          paginationTotalRows={pagination.total || 0}
+          paginationRowsPerPageOptions={[10, 20, 50, 100]}
+          paginationPerPage={limit}
+          onChangePage={(p) => setPage(p)}
+          onChangeRowsPerPage={(newLimit) => {
+            setLimit(newLimit);
+            setPage(1);
+          }}
+        />
+      </div>
     </div>
   );
 }

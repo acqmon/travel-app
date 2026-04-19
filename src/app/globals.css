@@ -46,3 +46,26 @@ body {
   background: var(--background);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+.table-pagination-wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* TABLE AREA */
+.table-pagination-wrapper > div:first-child {
+  height: 90% !important;
+}
+
+/* PAGINATION AREA */
+.table-pagination-wrapper > div:last-child {
+  height: 10% !important;
+  display: flex;
+  align-items: center;
+}
+
+.rdt_TableBody {
+  overflow-y: scroll !important;
+}
