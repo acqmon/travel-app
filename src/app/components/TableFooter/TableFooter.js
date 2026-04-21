@@ -10,7 +10,7 @@ export default function TableFooter({
 }) {
   console.log("rowsPerPage", rowsPerPage);
   return (
-    <div className="w-full h-full flex items-center justify-between mt-2 gap-2">
+    <div className="w-full h-full bg-primary flex items-center justify-between gap-2">
       <PageSize
         options={options}
         rowsPerPage={rowsPerPage}
