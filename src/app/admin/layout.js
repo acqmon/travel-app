@@ -43,7 +43,7 @@ export default function AdminLayout({ children }) {
         </header>
 
         {/* Content */}
-        <main className="flex-1 p-4 overflow-y-auto">{children}</main>
+        <main className="flex-1 p-2 overflow-y-auto">{children}</main>
 
         {/* Footer (empty for now) */}
         <footer className="h-12 border-t border-clr-light bg-white flex items-center justify-center text-sm text-clr-medium">
