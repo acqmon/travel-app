@@ -86,7 +86,7 @@ export default function AdminPartnersView({
   ];
 
   return (
-    <div className="w-full h-full flex flex-col gap-4 overflow-hidden">
+    <div className="w-full h-full flex flex-col gap-1 overflow-hidden">
       {/* Header */}
       <div className="h-[5%] flex justify-between items-center">
         <h3 className="font-semibold text-lg">Partners</h3>
