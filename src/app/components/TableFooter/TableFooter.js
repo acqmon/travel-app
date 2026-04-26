@@ -19,7 +19,7 @@ export default function TableFooter({
 
       <PaginationView
         rowCount={rowCount}
-        rowsPerPage={rowsPerPage?.value}
+        rowsPerPage={rowsPerPage}
         currentPage={currentPage}
         onChangePage={onChangePage}
       />

@@ -113,10 +113,13 @@ export default function AdminPartnersView({
           pagination
           paginationServer
           paginationTotalRows={pagination.total || 0}
-          paginationRowsPerPageOptions={[10, 20, 50, 100]}
-          paginationPerPage={limit}
-          onChangePage={(p) => setPage(p)}
+          paginationPerPage={limit || 10}
+          onChangePage={(p) => {
+            console.log("page", p);
+            setPage(p);
+          }}
           onChangeRowsPerPage={(newLimit) => {
+            console.log("newLimit", newLimit);
             setLimit(newLimit);
             setPage(1);
           }}

@@ -9,6 +9,7 @@ export default function PaginationView({
   currentPage,
 }) {
   console.log("currentPage", currentPage);
+  console.log("rowsPerPage pagintaion", rowsPerPage);
   const totalPages = Math.ceil(rowCount / rowsPerPage);
 
   if (totalPages <= 1) return null;
