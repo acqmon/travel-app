@@ -16,10 +16,6 @@ const Activity = sequelize.define(
     description: {
       type: DataTypes.TEXT,
     },
-    category: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
     isActive: {
       type: DataTypes.BOOLEAN,
       defaultValue: true,

@@ -1,4 +1,3 @@
-// app/admin/customers/page.jsx
 "use client";
 
 import AdminCustomersView from "@/app/admin/customers/(components)/AdminCustomersView";
