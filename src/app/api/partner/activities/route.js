@@ -51,7 +51,11 @@ export const POST = withAuth(
     }
 
     if (status) {
-      whereClause.status = status;
+      if (status === "all") {
+        delete whereClause.status;
+      } else {
+        whereClause.status = status;
+      }
     }
 
     const activityWhere = {};

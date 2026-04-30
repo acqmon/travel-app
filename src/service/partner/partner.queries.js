@@ -20,11 +20,12 @@ export const usePartners = (filters) => {
   });
 };
 
-export const usePartnerActivities = (filters) => {
-  const { status, page, limit } = filters;
+export const usePartnerActivities = (filters = {}) => {
+  const { status = null, page = 1, limit = 10 } = filters;
+
   return useQuery({
     queryKey: ["partner-activities", status, page, limit],
-    queryFn: () => getPartnerActivities(filters),
+    queryFn: () => getPartnerActivities({ status, page, limit }),
     keepPreviousData: true,
     staleTime: 0,
     refetchOnMount: "always",

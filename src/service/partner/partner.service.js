@@ -6,10 +6,10 @@ export const getPartners = async (filters) => {
 };
 
 export const getPartnerActivities = async (filters) => {
-  const { page, limit } = filters;
+  const { page, limit, ...rest } = filters;
   const response = await apiClient.post(
     `/partner/activities?page=${page}&limit=${limit}`,
-    filters,
+    rest,
   );
   return response;
 };
