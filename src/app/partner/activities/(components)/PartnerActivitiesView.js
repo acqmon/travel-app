@@ -8,6 +8,7 @@ import {
   InputView,
 } from "@/app/components";
 import { PARTNER_ACTIVITY_STATUS } from "@/constants/status.constant.js";
+import CreateActivityModal from "../(modals)/createActivityModal.js";
 
 export default function PartnerActivitiesView({
   tabs,
@@ -18,6 +19,8 @@ export default function PartnerActivitiesView({
   handleOpenModal,
   handleCloseModal,
   isLoading,
+
+  masterActivities,
 
   // ✅ pagination props
   page,
@@ -110,10 +113,12 @@ export default function PartnerActivitiesView({
         />
       </div>
 
-      {/* Modal (if needed later) */}
-      <ModalView open={isModalOpen} onClose={handleCloseModal}>
-        <div className="p-4">Modal Content</div>
-      </ModalView>
+      {/* Modal */}
+      <CreateActivityModal
+        isModalOpen={isModalOpen}
+        handleCloseModal={handleCloseModal}
+        masterActivities={masterActivities?.data || []}
+      />
     </div>
   );
 }

@@ -2,11 +2,15 @@
 
 import { useState, useMemo } from "react";
 import { PARTNER_ACTIVITY_STATUS } from "@/constants/status.constant.js";
-import { usePartnerActivities } from "@/service/partner/partner.queries";
+import {
+  usePartnerActivities,
+  useCreatePartnerActivity,
+} from "@/service/partner/partner.queries";
+import { useMasterActivities } from "@/service/master/master.queries.js";
 
 export const usePartnerActivitiesPage = () => {
   const [activeTab, setActiveTab] = useState("ALL");
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(true);
 
   // ✅ pagination state
   const [page, setPage] = useState(1);
@@ -25,6 +29,8 @@ export const usePartnerActivitiesPage = () => {
     page,
     limit,
   });
+
+  const { data: masterActivities } = useMasterActivities();
 
   const activities = data?.data || [];
   const pagination = data?.pagination || {};
@@ -47,6 +53,8 @@ export const usePartnerActivitiesPage = () => {
 
     activities,
     pagination,
+
+    masterActivities,
 
     page,
     setPage,

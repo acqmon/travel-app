@@ -8,6 +8,7 @@ export default function ModalView({
   children,
 }) {
   const sizeClasses = {
+    fit: "w-fit h-fit",
     sm: "w-[300px] h-[200px]",
     md: "w-[500px] h-[400px]",
     lg: "w-[800px] h-[600px]",
