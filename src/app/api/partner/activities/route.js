@@ -1,51 +1,38 @@
 import { NextResponse } from "next/server";
 import { withAuth } from "@/server/middleware/withAuth";
-import { PartnerActivity, PartnerProfile, Activity } from "@/server/models";
+import {
+  PartnerActivity,
+  PartnerProfile,
+  Activity,
+  Category,
+} from "@/server/models";
 import { ROLE } from "@/constants/role.constant";
-
-export const GET = withAuth(
-  async (_, __, user) => {
-    const partnerProfile = await PartnerProfile.findOne({
-      where: { userId: user.id },
-    });
-
-    const activities = await PartnerActivity.findAll({
-      where: { partnerProfileId: partnerProfile.id },
-      include: [
-        {
-          model: Activity,
-          attributes: ["id", "name", "category"],
-        },
-      ],
-      order: [["created_at", "DESC"]],
-    });
-
-    return NextResponse.json(
-      {
-        message: "Partner activities fetched",
-        data: activities,
-      },
-      { status: 200 },
-    );
-  },
-  [ROLE.PARTNER],
-);
+import { Op } from "sequelize";
 
 export const POST = withAuth(
   async (req, _, user) => {
-    const body = await req.json();
-    const { activityId, price } = body;
+    let body = {};
 
-    if (!activityId || !price) {
-      return NextResponse.json(
-        { message: "activityId and price are required" },
-        { status: 400 },
-      );
+    try {
+      body = await req.json();
+    } catch {
+      body = {};
     }
+
+    const { search, status, isActive = true } = body;
+
+    const { searchParams } = new URL(req.url);
+    const page = Number(searchParams.get("page")) || 1;
+    const limit = Number(searchParams.get("limit")) || 10;
+
+    const offset = (page - 1) * limit;
 
     // Get partner profile
     const partnerProfile = await PartnerProfile.findOne({
-      where: { userId: user.id },
+      where: {
+        userId: user.id,
+        isActive: true,
+      },
     });
 
     if (!partnerProfile) {
@@ -55,40 +42,84 @@ export const POST = withAuth(
       );
     }
 
-    // Check activity exists
-    const activity = await Activity.findByPk(activityId);
-    if (!activity) {
-      return NextResponse.json(
-        { message: "Activity not found" },
-        { status: 404 },
-      );
+    const whereClause = {
+      partnerProfileId: partnerProfile.id,
+    };
+
+    if (typeof isActive === "boolean") {
+      whereClause.isActive = isActive;
     }
 
-    try {
-      const partnerActivity = await PartnerActivity.create({
-        partnerProfileId: partnerProfile.id,
-        activityId,
-        price,
-        status: "pending",
-      });
+    if (status) {
+      whereClause.status = status;
+    }
 
-      return NextResponse.json(
+    const activityWhere = {};
+
+    if (search?.trim()) {
+      activityWhere[Op.or] = [
+        { name: { [Op.like]: `%${search.trim()}%` } },
+        { description: { [Op.like]: `%${search.trim()}%` } },
+      ];
+    }
+
+    const { rows, count } = await PartnerActivity.findAndCountAll({
+      where: whereClause,
+      include: [
         {
-          message: "Activity submitted for approval",
-          data: partnerActivity,
+          model: Activity,
+          attributes: ["id", "name", "description"],
+          required: true,
+          where: activityWhere,
+          include: [
+            {
+              model: Category,
+              attributes: ["id", "name"],
+              through: { attributes: [] },
+            },
+          ],
         },
-        { status: 201 },
-      );
-    } catch (error) {
-      if (error.name === "SequelizeUniqueConstraintError") {
-        return NextResponse.json(
-          { message: "You already added this activity" },
-          { status: 409 },
-        );
-      }
+      ],
+      limit,
+      offset,
+      distinct: true,
+      order: [["created_at", "DESC"]],
+    });
 
-      throw error;
-    }
+    const formatted = rows.map((item) => ({
+      id: item.id,
+      price: item.price,
+      status: item.status,
+      isActive: item.isActive,
+      createdAt: item.createdAt,
+
+      activity: {
+        id: item.Activity.id,
+        name: item.Activity.name,
+        description: item.Activity.description,
+      },
+
+      categories:
+        item.Activity?.Categories?.map((cat) => ({
+          id: cat.id,
+          name: cat.name,
+        })) || [],
+    }));
+
+    const totalPages = Math.ceil(count / limit);
+
+    return NextResponse.json({
+      message: "Partner activities fetched successfully",
+      data: formatted,
+      pagination: {
+        total: count,
+        page,
+        limit,
+        totalPages,
+        hasNext: page < totalPages,
+        hasPrevious: page > 1,
+      },
+    });
   },
   [ROLE.PARTNER],
 );
