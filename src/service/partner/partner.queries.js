@@ -1,5 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
-import { getPartners } from "./partner.service";
+import {
+  getPartners,
+  getPartnerActivities,
+  createPartnerActivity,
+} from "./partner.service";
 
 export const usePartners = (filters) => {
   const { status, page, limit } = filters;
@@ -13,5 +17,23 @@ export const usePartners = (filters) => {
     staleTime: 0,
     refetchOnMount: "always",
     refetchOnWindowFocus: false,
+  });
+};
+
+export const usePartnerActivities = (filters) => {
+  const { status, page, limit } = filters;
+  return useQuery({
+    queryKey: ["partner-activities", status, page, limit],
+    queryFn: () => getPartnerActivities(filters),
+    keepPreviousData: true,
+    staleTime: 0,
+    refetchOnMount: "always",
+    refetchOnWindowFocus: false,
+  });
+};
+
+export const useCreatePartnerActivity = () => {
+  return useMutation({
+    mutationFn: (data) => createPartnerActivity(data),
   });
 };
