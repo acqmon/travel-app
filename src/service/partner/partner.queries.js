@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import {
   getPartners,
   getPartnerActivities,
@@ -34,7 +34,16 @@ export const usePartnerActivities = (filters = {}) => {
 };
 
 export const useCreatePartnerActivity = () => {
+  const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: (data) => createPartnerActivity(data),
+
+    onSuccess: () => {
+      // Refetch activities list
+      queryClient.invalidateQueries({
+        queryKey: ["partner-activities"],
+      });
+    },
   });
 };

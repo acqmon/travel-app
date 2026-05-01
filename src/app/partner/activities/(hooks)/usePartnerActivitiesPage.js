@@ -10,7 +10,7 @@ import { useMasterActivities } from "@/service/master/master.queries.js";
 
 export const usePartnerActivitiesPage = () => {
   const [activeTab, setActiveTab] = useState("ALL");
-  const [isModalOpen, setIsModalOpen] = useState(true);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   // ✅ pagination state
   const [page, setPage] = useState(1);

@@ -78,8 +78,13 @@ export default function PartnerActivitiesView({
   return (
     <div className="w-full h-full flex flex-col gap-1 overflow-hidden">
       {/* Header */}
-      <div className="h-[5%] flex justify-between items-center">
+      <div className="h-[8%] flex justify-between items-center">
         <h3 className="font-semibold text-lg">Partner Activities</h3>
+        <ButtonView
+          title="Add Activity"
+          variant="primary"
+          onClick={handleOpenModal}
+        />
       </div>
 
       {/* Tabs + Search */}
@@ -92,7 +97,7 @@ export default function PartnerActivitiesView({
       </div>
 
       {/* Table */}
-      <div className="table-pagination-wrapper h-[85%]">
+      <div className="table-pagination-wrapper h-[82%]">
         <DataTable
           columns={columns}
           data={activities}

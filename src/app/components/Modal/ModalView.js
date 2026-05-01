@@ -2,7 +2,7 @@
 
 export default function ModalView({
   showModal = false,
-  closeModal,
+  onClose,
   title,
   size = "md",
   children,
@@ -22,7 +22,7 @@ export default function ModalView({
         >
           <div className="flex items-center justify-between">
             <h3>{title}</h3>
-            <button onClick={closeModal}>Close</button>
+            <button onClick={onClose}>Close</button>
           </div>
           {children}
         </div>
