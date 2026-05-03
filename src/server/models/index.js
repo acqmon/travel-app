@@ -5,7 +5,8 @@ import Activity from "./activity.model.js";
 import Category from "./category.model.js";
 import ActivityCategoryMapping from "./activity_category_mapping.model.js";
 import PartnerActivity from "./partner_activity.model.js";
-
+import CustomerPlan from "./customer_plan.model.js";
+import PartnerPlan from "./partner_plan.model.js";
 
 // User-PartnerProfile
 User.hasOne(PartnerProfile, { foreignKey: "userId" });
@@ -49,4 +50,6 @@ export {
   Category,
   ActivityCategoryMapping,
   PartnerActivity,
+  CustomerPlan,
+  PartnerPlan,
 };

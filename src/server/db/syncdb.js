@@ -7,6 +7,8 @@ import {
   Category,
   ActivityCategoryMapping,
   PartnerActivity,
+  CustomerPlan,
+  PartnerPlan,
 } from "../models/index.js";
 
 async function syncDB() {
